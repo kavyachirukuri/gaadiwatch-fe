@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo } from './Logo';
+import { CityPicker } from './CityPicker';
 
 const links = [
   { href: '/rent', label: 'Rent' },
@@ -20,9 +21,7 @@ export function SiteHeader() {
           </Link>
         ))}
       </nav>
-      <button type="button" className="btn bs" style={{ minHeight: 40 }}>
-        Bengaluru
-      </button>
+      <CityPicker />
       <Link className="btn bt" href="/login">
         Log in
       </Link>
