@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { SaveSearchButton } from '@/components/SaveSearchButton';
 import { inr } from '@/lib/format';
 import { typeOptions, useMeta } from '@/lib/use-meta';
 import {
@@ -277,7 +278,7 @@ export function RentSearch() {
                   <button key={v} type="button" className={view === v ? 'on' : ''} aria-pressed={view === v} onClick={() => setView(v)}>{text}</button>
                 ))}
               </div>
-              <Link className="btn bs" href="/login">Save search &amp; alert me</Link>
+              <SaveSearchButton mode="rent" label={`${label.many[0].toUpperCase()}${label.many.slice(1)} near ${area}`} text="Save search & alert me" />
             </div>
           </div>
 
@@ -372,7 +373,12 @@ function ResultCard({ listing: l, days, active, onHover, dates }: { listing: Ren
       onFocus={() => onHover(l.id)}
       style={{ display: 'flex', flexWrap: 'wrap', gap: 14, padding: 12, textDecoration: 'none', color: 'var(--ink)', borderColor: active ? 'var(--green)' : undefined }}
     >
-      <div className="ph" style={{ width: 150, height: 112, flex: 'none' }}>Photo</div>
+      {l.photo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={l.photo} alt="" style={{ width: 150, height: 112, flex: 'none', objectFit: 'cover', borderRadius: 10 }} />
+      ) : (
+        <div className="ph" style={{ width: 150, height: 112, flex: 'none' }}>Photo</div>
+      )}
       <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
           <strong>{l.title} · {l.year}</strong>

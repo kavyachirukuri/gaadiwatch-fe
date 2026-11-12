@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ContactButton } from './ContactButton';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { inr, inrShort } from '@/lib/format';
@@ -81,7 +82,7 @@ function Detail({ listing: l, cityName, initialFrom, initialTo }: { listing: Lis
               {l.area}, {cityName}
               {l.rating.average !== null ? ` · ${l.rating.average} ★ (${l.rating.count} ${l.rating.count === 1 ? 'review' : 'reviews'})` : ''}
               {l.completedTrips > 0 ? ` · ${l.completedTrips} trips` : ''}
-              {' · '}<Link href="/help">Report listing</Link>
+              {' · '}<Link href={`/help?listing=${l.id}&what=${encodeURIComponent(`Listing · ${l.title}`)}`}>Report listing</Link>
             </p>
             {l.description && <p>{l.description}</p>}
           </section>
@@ -315,9 +316,7 @@ function SellerCard({ listing: l }: { listing: ListingDetail }) {
           {s.replyMinutes !== null && <div className="mut">Replies in ~{s.replyMinutes} min</div>}
         </div>
       )}
-      <Link className="btn bs" href={`/login?next=${encodeURIComponent(`/listings/${l.id}`)}`}>
-        Message {s.kind === 'operator' ? 'operator' : 'seller'}
-      </Link>
+      <ContactButton listingId={l.id}>Message {s.kind === 'operator' ? 'operator' : 'seller'}</ContactButton>
     </section>
   );
 }
@@ -414,7 +413,6 @@ function Row({ label, value }: { label: string; value: string }) {
 
 function SaleCard({ listing: l }: { listing: ListingDetail }) {
   const sale = l.sale!;
-  const next = encodeURIComponent(`/listings/${l.id}`);
   return (
     <section className="card" aria-labelledby="sl" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 12 }}>
       {l.rent && <span className="k">Also for sale</span>}
@@ -424,8 +422,8 @@ function SaleCard({ listing: l }: { listing: ListingDetail }) {
         {sale.serviceHistory && <span className="chip">Service history</span>}
         {sale.exRental && <span className="chip">Ex-rental</span>}
       </div>
-      {sale.openToOffers && <Link className="btn bs" href={`/login?next=${next}`}>Make an offer</Link>}
-      <Link className="btn bt" href={`/login?next=${next}`}>Book a test ride</Link>
+      {sale.openToOffers && <ContactButton listingId={l.id} action="offer">Make an offer</ContactButton>}
+      <ContactButton listingId={l.id} action="ride" className="btn bt">Book a test ride</ContactButton>
     </section>
   );
 }

@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { Logo } from './Logo';
 import { CityPicker } from './CityPicker';
+import { HeaderAccount } from './HeaderAccount';
 
 const links = [
   { href: '/rent', label: 'Rent' },
   { href: '/buy', label: 'Buy' },
   { href: '/list-vehicle', label: 'List your vehicle' },
-  { href: '/operator', label: 'For operators' },
+  { href: '/operator', label: 'Owner dashboard' },
   { href: '/help', label: 'Help' },
 ];
 
@@ -22,12 +23,7 @@ export function SiteHeader() {
         ))}
       </nav>
       <CityPicker />
-      <Link className="btn bt" href="/login">
-        Log in
-      </Link>
-      <Link className="btn bp" href="/login">
-        Sign up
-      </Link>
+      <HeaderAccount />
     </header>
   );
 }

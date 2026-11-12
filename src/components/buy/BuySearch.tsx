@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { SaveSearchButton } from '@/components/SaveSearchButton';
 import { inrShort } from '@/lib/format';
 import { typeOptions, useMeta } from '@/lib/use-meta';
 import { fuelLabel, projectToMap, searchBuy, type BuyResult, type Page } from '@/lib/listings-api';
@@ -267,7 +268,7 @@ export function BuySearch() {
               <strong>Get alerts for new {typeInfo.many} like these</strong>
               <div className="sm" style={{ color: '#0A5A49' }}>Push and WhatsApp when a matching listing goes live.</div>
             </div>
-            <Link className="btn bp" href="/login">Save search</Link>
+            <SaveSearchButton mode="buy" className="btn bp" label={`${typeInfo.many[0].toUpperCase()}${typeInfo.many.slice(1)} · ${budgetLabel} · near ${centreName}`} />
           </div>
 
           {error && (
@@ -358,8 +359,13 @@ function SaleCard({ listing: l }: { listing: BuyResult }) {
   const sellerText = l.seller === 'commercial' ? 'fleet seller' : ownerLabel(l.ownerCount);
   return (
     <Link href={`/listings/${l.id}`} className="card" style={{ overflow: 'hidden', textDecoration: 'none', color: 'var(--ink)', borderColor: l.featured ? '#B86E00' : undefined, display: 'flex', flexDirection: 'column' }}>
-      <div className="ph" style={{ height: 160, borderRadius: 0, position: 'relative' }}>
-        Photo · {l.title}
+      <div className="ph" style={{ height: 160, borderRadius: 0, position: 'relative', overflow: 'hidden' }}>
+        {l.photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={l.photo} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <>Photo · {l.title}</>
+        )}
         {l.featured && <span className="chip wa" style={{ position: 'absolute', left: 10, top: 10 }}>Featured</span>}
       </div>
       <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>

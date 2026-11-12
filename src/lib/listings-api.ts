@@ -1,5 +1,6 @@
 // Types and calls for the NestJS listings API.
 import { API_URL } from './api';
+import { tenantHeaders } from './tenant';
 
 export type Page<T> = {
   items: T[];
@@ -12,6 +13,7 @@ export type Page<T> = {
 export type RentResult = {
   id: string;
   title: string;
+  photo: string | null;
   type: string;
   fuel: string;
   year: number;
@@ -35,6 +37,7 @@ export type RentResult = {
 export type BuyResult = {
   id: string;
   title: string;
+  photo: string | null;
   type: string;
   fuel: string;
   year: number;
@@ -66,7 +69,7 @@ function toQuery(params: Params): string {
 }
 
 async function get<T>(path: string, params: Params, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(`${API_URL}${path}?${toQuery(params)}`, { signal, headers: { Accept: 'application/json' } });
+  const res = await fetch(`${API_URL}${path}?${toQuery(params)}`, { signal, headers: { Accept: 'application/json', ...tenantHeaders() } });
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { message?: string } | null;
     throw new Error(body?.message ?? `Request failed (${res.status})`);
@@ -117,6 +120,15 @@ export type Meta = {
   vehicleCategories: VehicleCategory[];
   cities: { key: string; name: string }[];
   areas: { name: string; city: string }[];
+  requestReplyHours: number;
+  licenceClasses: Record<string, string>;
+  fees: { saleBoost: number; saleSuccess: number; gpsDevice: number; gpsMonthly: number; inspection: number };
+  minListingPhotos: number;
+  depositSettlementHours: number;
+  helpTopics: { slug: string; title: string; body: string }[];
+  disputeTypes: Record<string, string>;
+  reportReasons: string[];
+  grievanceEmail: string;
 };
 
 export const getMeta = (signal?: AbortSignal) => get<Meta>('/meta', {}, signal);
@@ -188,7 +200,7 @@ export type ListingDetail = {
 export class NotFoundError extends Error {}
 
 export async function getListing(id: string, signal?: AbortSignal): Promise<ListingDetail> {
-  const res = await fetch(`${API_URL}/listings/${encodeURIComponent(id)}`, { signal, headers: { Accept: 'application/json' } });
+  const res = await fetch(`${API_URL}/listings/${encodeURIComponent(id)}`, { signal, headers: { Accept: 'application/json', ...tenantHeaders() } });
   if (res.status === 404) throw new NotFoundError('Listing not found');
   if (!res.ok) throw new Error(`Request failed (${res.status})`);
   return res.json() as Promise<ListingDetail>;

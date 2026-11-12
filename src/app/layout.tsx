@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { AuthProvider } from '@/lib/auth';
+import { SiteChrome } from '@/components/SiteChrome';
+import { TenantProvider } from '@/components/TenantProvider';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -17,9 +20,17 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body>
-        <SiteHeader />
-        {children}
-        <SiteFooter />
+        <TenantProvider>
+          <AuthProvider>
+            <SiteChrome>
+              <SiteHeader />
+            </SiteChrome>
+            {children}
+            <SiteChrome>
+              <SiteFooter />
+            </SiteChrome>
+          </AuthProvider>
+        </TenantProvider>
       </body>
     </html>
   );
