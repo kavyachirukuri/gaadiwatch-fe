@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { API_URL } from './api';
 import { tenantHeaders } from './tenant';
 
@@ -180,14 +180,14 @@ export function useAuth(): AuthState {
 export function useRequireAuth(): { user: Me | null; ready: boolean } {
   const { user, ready } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     if (ready && !user) {
-      const next = `${pathname}${typeof window !== 'undefined' ? window.location.search : ''}`;
+      // Read the URL here (not usePathname) so pages using this can still be prerendered
+      const next = `${window.location.pathname}${window.location.search}`;
       router.replace(`/login?next=${encodeURIComponent(next)}`);
     }
-  }, [ready, user, router, pathname]);
+  }, [ready, user, router]);
 
   return { user, ready };
 }
