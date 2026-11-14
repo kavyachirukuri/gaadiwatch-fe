@@ -19,9 +19,15 @@ export function AdminLogin() {
     setBusy(true);
     setErr(null);
     try {
-      const r = await api<{ challengeId: string }>('/admin/auth/login', { body: { email, password } });
-      setChallengeId(r.challengeId);
+      const r = await api<{ challengeId?: string; token?: string }>('/admin/auth/login', { body: { email, password } });
       setPassword('');
+      if (r.token) {
+        // Password-only sign-in (authenticator step switched off on the server)
+        writeToken(r.token, STAFF_TOKEN_KEY);
+        router.replace('/admin');
+        return;
+      }
+      setChallengeId(r.challengeId ?? null);
     } catch (x) {
       setErr(errorMessage(x));
     } finally {
