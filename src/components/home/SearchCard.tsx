@@ -50,7 +50,7 @@ export function SearchCard() {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: 10 }}>
         <div>
           <label className="lbl" htmlFor="h-loc">Location</label>
           <input id="h-loc" className="in" value={location} placeholder={placeholder} onChange={(e) => setLocation(e.target.value)} list="h-areas" />

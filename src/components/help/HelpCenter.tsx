@@ -44,13 +44,13 @@ export function HelpCenter() {
     <main className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <h1 style={{ fontSize: 32 }}>Help &amp; safety</h1>
+          <h1 style={{ fontSize: 'clamp(24px, 6vw, 32px)' }}>Help &amp; safety</h1>
           <p className="mut">We&apos;re here 24×7, especially while you&apos;re on a trip.</p>
         </div>
         <input className="in" style={{ maxWidth: 420 }} aria-label="Search help" placeholder="Search help, e.g. deposit" value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', gap: 16 }}>
         <SosCard />
         <SupportCard />
         <section className="card" style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 10 }} aria-labelledby="fq">
@@ -167,13 +167,13 @@ function Disputes() {
   }
 
   return (
-    <section className="card" style={{ flex: '999 1 560px', minWidth: 0, padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }} aria-labelledby="dp">
+    <section className="card" style={{ flex: '999 1 560px', minWidth: 0, padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 16 }} aria-labelledby="dp">
       <h2 id="dp" style={{ fontSize: 22 }}>Raise a dispute</h2>
       {bookings.data?.length === 0 ? (
         <p className="sm mut">Disputes can be raised about trips that have started. You have none yet.</p>
       ) : (
         <form onSubmit={(e) => void submit(e)} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', gap: 14 }}>
             <div>
               <label className="lbl" htmlFor="bk">Booking</label>
               <select id="bk" className="in" value={chosen} onChange={(e) => setBookingId(e.target.value)}>
@@ -193,7 +193,7 @@ function Disputes() {
           </div>
           <div>
             <span className="lbl">Photos (the hand-over checklist photos are attached automatically)</span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(120px, 100%), 1fr))', gap: 8 }}>
               {photos.map((u) => <Thumb key={u} url={u} height={84} onRemove={() => setPhotos((xs) => xs.filter((x) => x !== u))} />)}
               <FilePick label="+ Add photos" className="card" style={{ height: 84, display: 'flex', alignItems: 'center', justifyContent: 'center', borderStyle: 'dashed', color: 'var(--green)', font: '600 13px var(--font-body)', width: '100%' }} onUploaded={(u) => setPhotos((xs) => [...xs, u])} />
             </div>
@@ -248,7 +248,7 @@ function DisputeDetailView({ id, onChange }: { id: string; onChange: () => void 
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 12 }}>
-      <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 8 }} className="sm">
+      <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(130px, 100%), 1fr))', gap: 8 }} className="sm">
         {steps.map((s, i) => (
           <li key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             <span className={`step ${s.done ? 'dn' : i === currentIdx ? 'on' : ''}`}>{s.done ? '✓' : i + 1}</span>
@@ -264,7 +264,7 @@ function DisputeDetailView({ id, onChange }: { id: string; onChange: () => void 
         <div className="note g sm">Decision: {data.decisionReason}{data.amountKept ? ` · ${inr(data.amountKept)} kept for the owner` : ''}</div>
       )}
       {data.evidence.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(110px, 100%), 1fr))', gap: 8 }}>
           {data.evidence.map((p) => <Thumb key={p.url} url={p.url} label={`${p.phase === 'pickup' ? 'Pick-up' : 'Return'} · ${p.label}`} height={70} />)}
         </div>
       )}
@@ -304,7 +304,7 @@ function ReportForm() {
   }
 
   return (
-    <section className="card" style={{ flex: '1 1 340px', padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="rp">
+    <section className="card" style={{ flex: '1 1 340px', padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="rp">
       <h2 id="rp" style={{ fontSize: 22 }}>Report a listing or user</h2>
       {!listingId && !userId ? (
         <p className="sm mut">Open the listing or chat you want to report and use its &quot;Report&quot; link — it brings you here with the details filled in.</p>

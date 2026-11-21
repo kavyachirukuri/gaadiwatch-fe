@@ -95,8 +95,8 @@ export function LoginFlow() {
 
   return (
     <div style={{ minHeight: 'calc(100vh - 140px)', display: 'flex', flexWrap: 'wrap' }}>
-      <aside style={{ flex: '1 1 420px', background: 'var(--hero)', color: '#fff', padding: 48, display: 'flex', flexDirection: 'column', gap: 28 }}>
-        <h1 style={{ fontSize: 40, color: '#fff', maxWidth: 440 }}>One account to rent, buy, sell and list.</h1>
+      <aside className="hide-sm" style={{ flex: '1 1 420px', background: 'var(--hero)', color: '#fff', padding: 'clamp(24px, 5vw, 48px)', display: 'flex', flexDirection: 'column', gap: 28 }}>
+        <h1 style={{ fontSize: 'clamp(24px, 6vw, 40px)', color: '#fff', maxWidth: 440 }}>One account to rent, buy, sell and list.</h1>
         <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 14, color: '#CFE3DC' }}>
           <li><strong style={{ color: '#fff' }}>Guest</strong> — browse and see prices, no sign-up needed</li>
           <li><strong style={{ color: '#fff' }}>Renter</strong> — phone OTP + Aadhaar KYC + driving licence</li>
@@ -109,9 +109,9 @@ export function LoginFlow() {
         </p>
       </aside>
 
-      <main style={{ flex: '999 1 560px', padding: '48px 32px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+      <main style={{ flex: '999 1 560px', minWidth: 0, padding: 'clamp(24px, 5vw, 48px) 16px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
         {step === 'phone' && (
-          <form onSubmit={sendCode} className="card" style={{ flex: '1 1 360px', maxWidth: 440, padding: 32, display: 'flex', flexDirection: 'column', gap: 18 }} aria-labelledby="s1">
+          <form onSubmit={sendCode} className="card" style={{ flex: '1 1 360px', maxWidth: 440, padding: 'clamp(16px, 4vw, 32px)', display: 'flex', flexDirection: 'column', gap: 18 }} aria-labelledby="s1">
             <span className="k">Step 1 of 2</span>
             <h2 id="s1" style={{ fontSize: 26 }}>Log in or sign up</h2>
             <div>
@@ -136,7 +136,7 @@ export function LoginFlow() {
         )}
 
         {step === 'code' && (
-          <form onSubmit={verify} className="card" style={{ flex: '1 1 360px', maxWidth: 440, padding: 32, display: 'flex', flexDirection: 'column', gap: 18 }} aria-labelledby="s2">
+          <form onSubmit={verify} className="card" style={{ flex: '1 1 360px', maxWidth: 440, padding: 'clamp(16px, 4vw, 32px)', display: 'flex', flexDirection: 'column', gap: 18 }} aria-labelledby="s2">
             <span className="k">Step 2 of 2</span>
             <h2 id="s2" style={{ fontSize: 26 }}>Enter the 6-digit code</h2>
             <p className="mut">
@@ -178,7 +178,7 @@ export function LoginFlow() {
         )}
 
         {step === 'name' && (
-          <form onSubmit={saveName} className="card" style={{ flex: '1 1 360px', maxWidth: 520, padding: 32, display: 'flex', flexDirection: 'column', gap: 18 }} aria-labelledby="s3">
+          <form onSubmit={saveName} className="card" style={{ flex: '1 1 360px', maxWidth: 520, padding: 'clamp(16px, 4vw, 32px)', display: 'flex', flexDirection: 'column', gap: 18 }} aria-labelledby="s3">
             <span className="k">New account</span>
             <h2 id="s3" style={{ fontSize: 26 }}>Tell us your name</h2>
             <p className="sm mut">Shown on your profile. It must match your Aadhaar for verification.</p>

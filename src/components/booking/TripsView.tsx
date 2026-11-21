@@ -46,7 +46,7 @@ export function TripsView() {
   return (
     <main className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <h1 style={{ fontSize: 32 }}>My trips</h1>
+        <h1 style={{ fontSize: 'clamp(24px, 6vw, 32px)' }}>My trips</h1>
         <Link className="btn bs" href="/rent">Rent a vehicle</Link>
       </div>
 
@@ -65,7 +65,7 @@ export function TripsView() {
       {bookings === null ? (
         <p className="mut">Loading…</p>
       ) : shown.length === 0 ? (
-        <div className="card" style={{ padding: 28, textAlign: 'center' }}>
+        <div className="card" style={{ padding: 'clamp(16px, 4vw, 28px)', textAlign: 'center' }}>
           <p className="mut">No {tab} trips.</p>
         </div>
       ) : (
@@ -164,7 +164,7 @@ function TripDetail({ booking: b, onChange, onClose }: { booking: Booking; onCha
         <div className="note r"><span>Cancelled{b.cancelReason ? ` (${b.cancelReason})` : ''}. Refund: {inr(b.refundAmount ?? 0)}.</span></div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 16 }}>
         <div className="sm" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           <strong>When</strong>
           <span>{fmtDateTime(b.startAt)}</span>

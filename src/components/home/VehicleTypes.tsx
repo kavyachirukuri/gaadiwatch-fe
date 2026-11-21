@@ -9,7 +9,7 @@ export function VehicleTypes() {
   const categories = meta?.vehicleCategories ?? [];
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(150px, 100%), 1fr))', gap: 12 }}>
       {categories.map((c) => (
         <Link
           key={c.key}

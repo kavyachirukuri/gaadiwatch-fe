@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { inr, inrShort } from '@/lib/format';
+import { inr, inrShort, km } from '@/lib/format';
 import { searchBuy, searchRent, TRACKING_LABEL, fuelLabel, type BuyResult, type Page, type RentResult } from '@/lib/listings-api';
 import { useMeta } from '@/lib/use-meta';
 
@@ -55,7 +55,7 @@ export function HomeListings() {
           <h2 style={{ fontSize: 28 }}>{rent ? `Rent near ${rent.center.name}` : 'Rent near you'}</h2>
           <Link href={`/rent${rentQuery}`}>See all rentals</Link>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))', gap: 20 }}>
           {!rent && <SkeletonCards />}
           {rent?.items.map((l) => (
             <Link key={l.id} href={`/listings/${l.id}`} className="card" style={{ overflow: 'hidden', textDecoration: 'none', color: 'var(--ink)', display: 'flex', flexDirection: 'column' }}>
@@ -63,7 +63,7 @@ export function HomeListings() {
               <div style={{ padding: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
                   <strong>{l.title} · {l.year}</strong>
-                  <span className="sm mut">{l.distanceKm} km</span>
+                  <span className="sm mut">{km(l.distanceKm)} km</span>
                 </div>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                   <span className={`chip ${l.gpsTracked ? 'tr' : ''}`}>{TRACKING_LABEL[l.trackingSource]}</span>
@@ -87,7 +87,7 @@ export function HomeListings() {
           <h2 style={{ fontSize: 28 }}>{city ? `For sale in ${city.name}` : 'For sale near you'}</h2>
           <Link href={`/buy${buyQuery}`}>See all for sale</Link>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))', gap: 20 }}>
           {!buy && <SkeletonCards />}
           {buy?.items.map((l) => (
             <Link key={l.id} href={`/listings/${l.id}`} className="card" style={{ overflow: 'hidden', textDecoration: 'none', color: 'var(--ink)' }}>

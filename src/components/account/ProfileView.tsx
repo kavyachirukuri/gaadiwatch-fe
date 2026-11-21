@@ -53,7 +53,7 @@ function Profile({ user }: { user: Me }) {
 
   return (
     <main className="wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
-      <section className="card" style={{ flex: '1 1 300px', maxWidth: 380, padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }} aria-label="Your profile">
+      <section className="card" style={{ flex: '1 1 300px', maxWidth: 380, padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 14 }} aria-label="Your profile">
         <div className="av" style={{ width: 72, height: 72, fontSize: 24 }}>{initials}</div>
         <EditName user={user} />
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>

@@ -33,7 +33,7 @@ export function InvoiceView() {
         <h1 style={{ fontSize: 28 }}>Invoice {data.number}</h1>
         <button type="button" className="btn bs" onClick={() => window.print()}>Print / save as PDF</button>
       </div>
-      <section className="card" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <section className="card" style={{ padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }} className="sm">
           <div><div className="k">From</div><strong>{data.seller.name}</strong>{data.seller.gstin && <div>GSTIN {data.seller.gstin}</div>}</div>
           <div><div className="k">To</div><strong>{data.buyer.name ?? 'Renter'}</strong></div>

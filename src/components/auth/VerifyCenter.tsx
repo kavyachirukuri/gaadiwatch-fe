@@ -36,7 +36,7 @@ export function VerifyCenter() {
   return (
     <main className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 900 }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <h1 style={{ fontSize: 32 }}>Verification</h1>
+        <h1 style={{ fontSize: 'clamp(24px, 6vw, 32px)' }}>Verification</h1>
         <p className="mut">Finish these once. Renting needs KYC and a driving licence; listing vehicles for rent also needs an operator profile.</p>
       </div>
 
@@ -101,7 +101,7 @@ function KycSection({ user, onDone }: { user: Me; onDone: (u: Me) => void }) {
           onSubmit={(e) => { e.preventDefault(); void run('/me/verification/kyc', { aadhaarNumber: aadhaar, nameOnAadhaar: name, consent }); }}
           style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 12 }}>
             <div>
               <label className="lbl" htmlFor="ad">Aadhaar number</label>
               <input id="ad" className="in" inputMode="numeric" value={aadhaar} onChange={(e) => setAadhaar(e.target.value.replace(/[^\d ]/g, '').slice(0, 14))} placeholder="1234 5678 9012" required />
@@ -143,7 +143,7 @@ function LicenceSection({ user, onDone }: { user: Me; onDone: (u: Me) => void })
           onSubmit={(e) => { e.preventDefault(); void run('/me/verification/licence', { licenceNumber: number, dateOfBirth: dob, classes }); }}
           style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 12 }}>
             <div>
               <label className="lbl" htmlFor="dl">Licence number</label>
               <input id="dl" className="in" value={number} onChange={(e) => setNumber(e.target.value.toUpperCase())} placeholder="KA0120230001234" required />
@@ -210,7 +210,7 @@ function OperatorSection({ user, onDone, cities }: { user: Me; onDone: (u: Me) =
       ) : (
         <form
           onSubmit={(e) => { e.preventDefault(); void run('/me/operator', { businessName, city, rentalLicenceNo: licence, ...(gstin ? { gstin } : {}) }); }}
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 12 }}
         >
           <div>
             <label className="lbl" htmlFor="bn">Business name</label>

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ContactButton } from './ContactButton';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
-import { inr, inrShort } from '@/lib/format';
+import { inr, inrShort, km } from '@/lib/format';
 import { fuelLabel, getListing, NotFoundError, TRACKING_LABEL, type ListingDetail } from '@/lib/listings-api';
 import { useMeta } from '@/lib/use-meta';
 
@@ -77,7 +77,7 @@ function Detail({ listing: l, cityName, initialFrom, initialTo }: { listing: Lis
               <span className={`chip ${l.tracking.gpsTracked ? 'tr' : ''}`}>{TRACKING_LABEL[l.tracking.source]}</span>
               <span className="chip">{v.registrationType === 'commercial' ? 'Commercial RC verified' : 'Private vehicle · RC verified'}</span>
             </div>
-            <h1 style={{ fontSize: 34 }}>{l.title} · {v.year}</h1>
+            <h1 style={{ fontSize: 'clamp(24px, 6vw, 34px)' }}>{l.title} · {v.year}</h1>
             <p className="mut">
               {l.area}, {cityName}
               {l.rating.average !== null ? ` · ${l.rating.average} ★ (${l.rating.count} ${l.rating.count === 1 ? 'review' : 'reviews'})` : ''}
@@ -87,7 +87,7 @@ function Detail({ listing: l, cityName, initialFrom, initialTo }: { listing: Lis
             {l.description && <p>{l.description}</p>}
           </section>
 
-          <section className="card" aria-label="Specifications" style={{ padding: 20, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 16 }}>
+          <section className="card" aria-label="Specifications" style={{ padding: 20, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(130px, 100%), 1fr))', gap: 16 }}>
             <Spec label="Type" value={v.typeLabel} />
             <Spec label="Make / model" value={`${v.make} ${v.model}`} />
             <Spec label="Year" value={String(v.year)} />
@@ -138,14 +138,14 @@ function Detail({ listing: l, cityName, initialFrom, initialTo }: { listing: Lis
       {l.similar.length > 0 && (
         <section style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <h2 style={{ fontSize: 22 }}>Similar {l.rent ? 'rentals' : 'vehicles'} nearby</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(220px, 100%), 1fr))', gap: 16 }}>
             {l.similar.map((s) => (
               <Link key={s.id} className="card" href={`/listings/${s.id}`} style={{ padding: 12, textDecoration: 'none', color: 'var(--ink)' }}>
                 <div className="ph" style={{ height: 110 }}>Photo</div>
                 <strong style={{ display: 'block', marginTop: 8 }}>
                   {s.title} · {s.unit === 'day' ? `${inr(s.price)}/day` : inrShort(s.price)}
                 </strong>
-                <span className="sm mut">{s.distanceKm} km away{s.rating !== null ? ` · ${s.rating} ★` : ''}</span>
+                <span className="sm mut">{km(s.distanceKm)} km away{s.rating !== null ? ` · ${s.rating} ★` : ''}</span>
               </Link>
             ))}
           </div>
@@ -168,15 +168,16 @@ function Gallery({ listing: l }: { listing: ListingDetail }) {
   const tiles = l.photos.slice(0, 5);
   const placeholders = ['Main photo', 'Side', 'Rear', 'Odometer', 'Details'];
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gridAutoRows: 180, gap: 8 }}>
+    // Phones: swipeable row of photos. Tablets and desktops: one big photo + a grid.
+    <div className="gallery" role="group" aria-label="Photos">
       {placeholders.map((label, i) => {
         const photo = tiles.at(i);
-        const style = i === 0 ? { gridRow: 'span 2', gridColumn: 'span 2' } : undefined;
+        const cls = i === 0 ? 'g-main' : undefined;
         return photo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img key={photo.id} src={photo.url} alt={`${l.title} photo ${i + 1}`} style={{ ...style, width: '100%', height: '100%', objectFit: 'cover', borderRadius: 10 }} />
+          <img key={photo.id} className={cls} src={photo.url} alt={`${l.title} photo ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 10 }} />
         ) : (
-          <div key={label} className="ph" style={style}>{label}</div>
+          <div key={label} className={`ph${cls ? ` ${cls}` : ''}`}>{label}</div>
         );
       })}
     </div>
@@ -209,7 +210,7 @@ function RentalTerms({ rent }: { rent: NonNullable<ListingDetail['rent']> }) {
           </tbody>
         </table>
       </div>
-      <div className="sm" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+      <div className="sm" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: 12 }}>
         {rent.freeKmPerDay !== null && (
           <div className="card" style={{ padding: 14 }}>
             <strong>{rent.freeKmPerDay} km free per day</strong>
@@ -349,7 +350,7 @@ function BookingCard({ listing: l, initialFrom, initialTo }: { listing: ListingD
       <h2 id="bk" style={{ fontSize: 20 }}>
         {inr(rent.pricePerDay)} <span className="sm mut" style={{ fontFamily: 'var(--font-body)' }}>/ day</span>
       </h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: 8 }}>
         <div>
           <label className="lbl" htmlFor="bk-from">Pick-up</label>
           <input id="bk-from" className="in" type="datetime-local" value={from} onChange={(e) => setFrom(e.target.value)} />

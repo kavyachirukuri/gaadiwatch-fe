@@ -42,7 +42,7 @@ export function AdminReview() {
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-        <h1 style={{ fontSize: 30 }}>Review queue</h1>
+        <h1 style={{ fontSize: 'clamp(24px, 6vw, 30px)' }}>Review queue</h1>
         <div className="seg">
           <button type="button" className={current === 'listings' ? 'on' : ''} onClick={() => setCurrent('listings')}>Listings ({list.data?.length ?? 0})</button>
           <button type="button" className={current === 'people' ? 'on' : ''} onClick={() => setCurrent('people')}>KYC &amp; licences ({peopleCount})</button>
@@ -101,7 +101,7 @@ function ListingReview({ id, onDone }: { id: string; onDone: () => void }) {
         </p>
         <p className="sm">{data.pricePerDay ? `${inr(data.pricePerDay)}/day` : ''}{data.pricePerDay && data.salePrice ? ' · ' : ''}{data.salePrice ? `Sale ${inr(data.salePrice)}` : ''}</p>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(110px, 100%), 1fr))', gap: 8 }}>
         {data.photos.map((u, i) => <Thumb key={u} url={u} height={80} label={`Photo ${i + 1}`} />)}
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

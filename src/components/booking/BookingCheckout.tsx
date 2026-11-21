@@ -121,7 +121,7 @@ export function BookingCheckout() {
   return (
     <main className="wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 28, alignItems: 'flex-start' }}>
       <div style={{ flex: '999 1 560px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <h1 style={{ fontSize: 32 }}>{quote.instantBook ? 'Book now' : 'Request to book'}</h1>
+        <h1 style={{ fontSize: 'clamp(24px, 6vw, 32px)' }}>{quote.instantBook ? 'Book now' : 'Request to book'}</h1>
 
         <section className="card" aria-label="Trip" style={{ padding: 20, display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
           <div className="ph" style={{ width: 120, height: 84 }}>Photo</div>

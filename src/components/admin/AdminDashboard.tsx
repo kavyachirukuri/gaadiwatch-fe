@@ -47,13 +47,13 @@ export function AdminDashboard() {
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-        <h1 style={{ fontSize: 30 }}>Marketplace health</h1>
+        <h1 style={{ fontSize: 'clamp(24px, 6vw, 30px)' }}>Marketplace health</h1>
         <div className="seg">
           {RANGES.map((r) => <button key={r.key} type="button" className={range === r.key ? 'on' : ''} onClick={() => setRange(r.key)}>{r.label}</button>)}
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(190px, 100%), 1fr))', gap: 14 }}>
         <Kpi label="Completed rentals" value={k.completedRentals.toLocaleString('en-IN')} sub={`North star${k.completedChange !== null ? ` · ${k.completedChange >= 0 ? '+' : ''}${Math.round(k.completedChange * 100)}% vs previous` : ''}`} />
         <Kpi label="Active listings" value={k.activeListings.toLocaleString('en-IN')} sub={data.cities.map((c) => `${c.name.slice(0, 3)} ${k.activeListingsByCity[c.key] ?? 0}`).join(' · ')} />
         <Kpi label="Requests accepted" value={pct(k.acceptance)} sub={k.medianReplyMinutes !== null ? `Median reply ${k.medianReplyMinutes} min` : ''} />

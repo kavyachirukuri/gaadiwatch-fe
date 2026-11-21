@@ -54,7 +54,7 @@ export function OperatorRequests() {
     <main className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 960 }}>
       <div>
         <Link href="/operator" className="sm">← Dashboard</Link>
-        <h1 style={{ fontSize: 32 }}>Bookings</h1>
+        <h1 style={{ fontSize: 'clamp(24px, 6vw, 32px)' }}>Bookings</h1>
       </div>
       <div className="seg" role="tablist" aria-label="Filter bookings" style={{ flexWrap: 'wrap' }}>
         {FILTERS.map((f) => (
@@ -67,7 +67,7 @@ export function OperatorRequests() {
       {rows === null ? (
         <p className="mut">Loading…</p>
       ) : rows.length === 0 ? (
-        <div className="card" style={{ padding: 24 }}><p className="mut">Nothing here.</p></div>
+        <div className="card" style={{ padding: 'clamp(16px, 4vw, 24px)' }}><p className="mut">Nothing here.</p></div>
       ) : (
         rows.map((b) => <RequestCard key={b.id} booking={b} onChange={load} />)
       )}

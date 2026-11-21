@@ -11,3 +11,8 @@ export function inrShort(n: number): string {
 function trim(v: number) {
   return Number(v.toFixed(2)).toString();
 }
+
+/** Distance for display: one decimal under 10 km, whole numbers above (e.g. 2.6, 14). */
+export function km(n: number): string {
+  return n < 10 ? (Math.round(n * 10) / 10).toString() : Math.round(n).toString();
+}

@@ -49,11 +49,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   return (
     <StaffContext.Provider value={staff}>
-      <header className="nav" style={{ background: 'var(--ink)', color: '#fff' }}>
+      <header className="nav nav-dark" style={{ background: 'var(--ink)', color: '#fff' }}>
         <Logo />
         <strong style={{ color: '#fff' }}>Admin</strong>
         <span style={{ flex: 1 }} />
-        <span className="sm" style={{ color: '#ddd' }}>{staff.name ?? staff.email} · {staff.role === 'admin' ? 'Admin' : 'Support agent'}</span>
+        <span className="sm hide-sm" style={{ color: '#ddd' }}>{staff.name ?? staff.email} · {staff.role === 'admin' ? 'Admin' : 'Support agent'}</span>
         <button
           type="button"
           className="btn bs"

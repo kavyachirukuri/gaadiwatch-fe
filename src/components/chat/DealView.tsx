@@ -73,14 +73,14 @@ export function DealView() {
         )}
         <div style={{ flex: '1 1 300px' }}>
           <span className="chip ok">Offer accepted · {inr(d.price)}</span>
-          <h1 style={{ fontSize: 30, marginTop: 6 }}>{d.listing.title} · {d.listing.year} · {d.listing.registration}</h1>
+          <h1 style={{ fontSize: 'clamp(24px, 6vw, 30px)', marginTop: 6 }}>{d.listing.title} · {d.listing.year} · {d.listing.registration}</h1>
           <p className="sm mut">
             Seller {d.seller.name} · Buyer {d.buyer.name} · {other.name}&apos;s number: <a href={`tel:${other.phone}`}>{other.phone}</a>
           </p>
         </div>
       </div>
 
-      <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10 }} className="sm" aria-label="Sale progress">
+      <ol style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: 10 }} className="sm" aria-label="Sale progress">
         {d.stages.map((s, i) => {
           const done = i <= idx && !(s === 'closed' && d.stage !== 'closed');
           const current = i === idx + 1;
@@ -98,7 +98,7 @@ export function DealView() {
       {err && <div className="note r" role="alert">{err}</div>}
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
-        <section className="card" style={{ flex: '999 1 560px', minWidth: 0, padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="rc">
+        <section className="card" style={{ flex: '999 1 560px', minWidth: 0, padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="rc">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
             <h2 id="rc" style={{ fontSize: 22 }}>RC transfer checklist</h2>
             <span className={`chip ${d.rcDone >= d.rcRequired ? 'ok' : 'wa'}`}>{d.rcDone} of {d.rcRequired} done</span>

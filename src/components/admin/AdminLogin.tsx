@@ -51,7 +51,7 @@ export function AdminLogin() {
 
   return (
     <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'var(--ground)' }}>
-      <section className="card" style={{ width: '100%', maxWidth: 420, padding: 28, display: 'flex', flexDirection: 'column', gap: 16 }} aria-labelledby="t">
+      <section className="card" style={{ width: '100%', maxWidth: 420, padding: 'clamp(16px, 4vw, 28px)', display: 'flex', flexDirection: 'column', gap: 16 }} aria-labelledby="t">
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Logo /><strong>Admin</strong></div>
         {!challengeId ? (
           <form onSubmit={(e) => void step1(e)} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

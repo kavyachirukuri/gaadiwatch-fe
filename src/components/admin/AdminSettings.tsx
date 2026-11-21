@@ -73,7 +73,7 @@ export function AdminSettings() {
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-        <h1 style={{ fontSize: 30 }}>Fees, categories &amp; cities</h1>
+        <h1 style={{ fontSize: 'clamp(24px, 6vw, 30px)' }}>Fees, categories &amp; cities</h1>
         {isAdmin && <button type="button" className="btn bp" disabled={Object.keys(draft).length === 0} onClick={() => void saveFees()}>Save changes</button>}
       </div>
       <div className="note"><span>Changes apply to new bookings and listings only. {isAdmin ? 'Every change is logged.' : 'Admin role required to change settings.'}</span></div>
@@ -82,7 +82,7 @@ export function AdminSettings() {
 
       <section className="card" style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 12 }} aria-labelledby="fc">
         <h2 id="fc" style={{ fontSize: 20 }}>Fees &amp; commission</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', gap: 14 }}>
           {FEES.map((f) => (
             <div key={f.key}>
               <label className="lbl" htmlFor={f.key}>{f.label} ({f.unit})</label>

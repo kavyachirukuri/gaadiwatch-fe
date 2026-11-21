@@ -78,7 +78,7 @@ function Dashboard({ user }: { user: Me }) {
     <main className="wrap" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 style={{ fontSize: 32 }}>{greeting}, {name}</h1>
+          <h1 style={{ fontSize: 'clamp(24px, 6vw, 32px)' }}>{greeting}, {name}</h1>
           {launch && <span className="chip ok">Zero commission until {new Date(launch).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} · launch offer</span>}
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -102,7 +102,7 @@ function Dashboard({ user }: { user: Me }) {
       )}
 
       {isOperator && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: 14 }}>
           <Link href="/operator/requests" className="card kpi" style={{ textDecoration: 'none', color: 'inherit' }}>
             <span className="sm mut">Pending requests</span>
             <b>{summary.data?.pendingRequests ?? '—'}</b>

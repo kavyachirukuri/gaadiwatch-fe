@@ -51,6 +51,10 @@ function markerElement(m: MapMarker) {
   return el;
 }
 
+// Less padding around the pins on small screens, so they don't get squeezed together
+const edgePadding = (el: HTMLElement | null) =>
+  el && el.clientWidth < 480 ? 24 : 48;
+
 /** A real Google map with price pills, vehicle dots, a geofence circle and a route line. */
 export function GoogleMap({
   markers,
@@ -76,6 +80,7 @@ export function GoogleMap({
     line?: google.maps.Polyline;
   }>({});
   const fitted = useRef("");
+  const lastBounds = useRef<google.maps.LatLngBounds | null>(null);
   const shapesKey = useRef("");
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading",
@@ -203,14 +208,32 @@ export function GoogleMap({
     if (key === fitted.current) return;
     fitted.current = key;
     if (pts.length === 1) {
+      lastBounds.current = null;
       m.setCenter(pts[0]);
       m.setZoom(14);
       return;
     }
     const b = new google.maps.LatLngBounds();
     pts.forEach((p) => b.extend(p));
-    m.fitBounds(b, 48);
+    lastBounds.current = b;
+    m.fitBounds(b, edgePadding(box.current));
   }, [markers, path, circle, center, status]);
+
+  // Phone rotated or window resized: fit the pins into the new size again
+  useEffect(() => {
+    const el = box.current;
+    if (status !== "ready" || !el || typeof ResizeObserver === "undefined")
+      return;
+    let width = el.clientWidth;
+    const ro = new ResizeObserver(() => {
+      if (Math.abs(el.clientWidth - width) < 40) return;
+      width = el.clientWidth;
+      if (lastBounds.current && map.current)
+        map.current.fitBounds(lastBounds.current, edgePadding(el));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [status]);
 
   if (status === "error" && fallback) return <>{fallback}</>;
   return (

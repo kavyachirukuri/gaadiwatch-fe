@@ -276,10 +276,10 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
       <main className="main" style={{ gap: 24 }}>
         {saved?.reviewNote && <div className="note w"><span><strong>From our review team:</strong> {saved.reviewNote}</span></div>}
 
-        <section id="s1" className="card" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h1">
+        <section id="s1" className="card" style={{ padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h1">
           <span className="k">Step 1</span>
           <h2 id="h1" style={{ fontSize: 22 }}>What do you want to do with this vehicle?</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: 12 }}>
             {([
               ['rent', 'Rent it out', 'Commercial registration + rental licence needed'],
               ['sell', 'Sell it', 'Any vehicle, private or commercial'],
@@ -310,7 +310,7 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
           </div>
         </section>
 
-        <section id="s2" className="card" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h2">
+        <section id="s2" className="card" style={{ padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h2">
           <span className="k">Step 2</span>
           <h2 id="h2" style={{ fontSize: 22 }}>Vehicle details</h2>
           <div>
@@ -324,7 +324,7 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
               ))}
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: 14 }}>
             <Field id="mk" label="Make" value={f.make} onChange={(v) => set('make', v)} placeholder="Honda" />
             <Field id="md" label="Model" value={f.model} onChange={(v) => set('model', v)} placeholder="Activa 6G" />
             <Field id="yr" label="Year" value={f.year} onChange={(v) => set('year', v.replace(/\D/g, '').slice(0, 4))} inputMode="numeric" />
@@ -358,17 +358,17 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
           )}
         </section>
 
-        <section id="s3" className="card" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h3">
+        <section id="s3" className="card" style={{ padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h3">
           <span className="k">Step 3</span>
           <h2 id="h3" style={{ fontSize: 22 }}>Photos &amp; documents</h2>
           <div>
             <span className="lbl">Photos · at least {minPhotos} <span className={`chip ${f.photos.length >= minPhotos ? 'ok' : 'wa'}`} style={{ marginLeft: 6 }}>{f.photos.length} added</span></span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(120px, 100%), 1fr))', gap: 8 }}>
               {f.photos.map((u, i) => <Thumb key={u} url={u} height={90} label={i === 0 ? 'Cover' : undefined} onRemove={() => set('photos', f.photos.filter((x) => x !== u))} />)}
               <FilePick label="+ Add" className="card" style={{ height: 90, display: 'flex', alignItems: 'center', justifyContent: 'center', borderStyle: 'dashed', color: 'var(--green)', font: '600 13px var(--font-body)', width: '100%' }} onUploaded={(u) => setF((x) => ({ ...x, photos: [...x.photos, u] }))} />
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', gap: 10 }}>
             {DOCS.filter((d) => !d.rentOnly || rents).map((d) => {
               const doc = f.documents.find((x) => x.type === d.type);
               return (
@@ -398,7 +398,7 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
           </div>
         </section>
 
-        <section id="s4" className="card" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }} aria-labelledby="h4">
+        <section id="s4" className="card" style={{ padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 16 }} aria-labelledby="h4">
           <span className="k">Step 4</span>
           <h2 id="h4" style={{ fontSize: 22 }}>Prices</h2>
           {hint.data && (hint.data.perDay || hint.data.salePrice) && (
@@ -414,7 +414,7 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
           {rents && (
             <>
               <h3 style={{ fontSize: 17 }}>Rental</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))', gap: 14 }}>
                 <Field id="p1" label="Per hour (₹)" value={f.rent.pricePerHour} onChange={(v) => setRent('pricePerHour', v)} inputMode="numeric" />
                 <Field id="p2" label="Per day (₹)" value={f.rent.pricePerDay} onChange={(v) => setRent('pricePerDay', v)} inputMode="numeric" />
                 <Field id="p3" label="Per week (₹)" value={f.rent.pricePerWeek} onChange={(v) => setRent('pricePerWeek', v)} inputMode="numeric" />
@@ -427,7 +427,7 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
                 <Field id="p10" label="Fuel charge (₹/litre)" value={f.rent.fuelChargePerLitre} onChange={(v) => setRent('fuelChargePerLitre', v)} inputMode="numeric" />
                 <Field id="p11" label="Helmets included" value={f.rent.helmetsIncluded} onChange={(v) => setRent('helmetsIncluded', v)} inputMode="numeric" />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', gap: 14 }}>
                 <div>
                   <label className="lbl" htmlFor="cp">Cancellation policy</label>
                   <select id="cp" className="in" value={f.rent.cancellationPolicy} onChange={(e) => setRent('cancellationPolicy', e.target.value)}>
@@ -449,7 +449,7 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
             <>
               {rents && <hr className="hr" />}
               <h3 style={{ fontSize: 17 }}>Sale</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: 14 }}>
                 <Field id="sp" label="Sale price (₹)" value={f.sale.salePrice} onChange={(v) => setSale('salePrice', v)} inputMode="numeric" />
                 <div className="li"><div style={{ flex: 1 }}><strong>Open to offers</strong></div><button type="button" className={`tog ${f.sale.openToOffers ? 'on' : ''}`} aria-label="Open to offers" aria-pressed={f.sale.openToOffers} onClick={() => setSale('openToOffers', !f.sale.openToOffers)} /></div>
                 <div className="li"><div style={{ flex: 1 }}><strong>Feature for 7 days</strong><div className="xs mut">Top of search{fees ? ` · ${inr(fees.saleBoost)}` : ''}</div></div><button type="button" className={`tog ${f.sale.featured ? 'on' : ''}`} aria-label="Feature listing" aria-pressed={f.sale.featured} onClick={() => setSale('featured', !f.sale.featured)} /></div>
@@ -459,7 +459,7 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
         </section>
 
         {rents && (
-          <section id="s5" className="card" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 12 }} aria-labelledby="h5">
+          <section id="s5" className="card" style={{ padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 12 }} aria-labelledby="h5">
             <span className="k">Step 5</span>
             <h2 id="h5" style={{ fontSize: 22 }}>Availability</h2>
             <p className="sm mut">Block dates for servicing or personal use. Booked dates fill in automatically. Requests expire if you don&apos;t reply within {meta?.requestReplyHours ?? 2} hours.</p>
@@ -468,10 +468,10 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
         )}
 
         {rents && (
-          <section id="s6" className="card" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h6">
+          <section id="s6" className="card" style={{ padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h6">
             <span className="k">Step 6</span>
             <h2 id="h6" style={{ fontSize: 22 }}>How should we track it?</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 12 }}>
               {SOURCES.map((src) => (
                 <label key={src.key} className="li" style={{ flexDirection: 'column', alignItems: 'flex-start', cursor: 'pointer', borderColor: f.tracking.source === src.key ? 'var(--green)' : undefined, borderWidth: f.tracking.source === src.key ? 2 : undefined }}>
                   <input type="radio" name="src" checked={f.tracking.source === src.key} onChange={() => setTrack('source', src.key)} style={{ accentColor: 'var(--green)' }} />
@@ -482,7 +482,7 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
               ))}
             </div>
             {f.tracking.source !== 'none' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 14 }}>
                 <div>
                   <label className="lbl" htmlFor="gf">Allowed area (geofence)</label>
                   <select id="gf" className="in" value={f.tracking.allowedArea} onChange={(e) => setTrack('allowedArea', e.target.value)}>
@@ -498,10 +498,10 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
           </section>
         )}
 
-        <section id={`s${steps.length}`} className="card" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h7">
+        <section id={`s${steps.length}`} className="card" style={{ padding: 'clamp(16px, 4vw, 24px)', display: 'flex', flexDirection: 'column', gap: 14 }} aria-labelledby="h7">
           <span className="k">Step {steps.length}</span>
           <h2 id="h7" style={{ fontSize: 22 }}>Review &amp; submit</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }} className="sm">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: 12 }} className="sm">
             <div><div className="mut">Listing</div><strong>{f.make || '—'} {f.model} {f.year} · {f.purpose === 'both' ? 'rent + sale' : f.purpose}</strong></div>
             {rents && <div><div className="mut">Rent</div><strong>{f.rent.pricePerDay ? `${inr(Number(f.rent.pricePerDay))}/day` : '—'} · {f.rent.depositAmount ? `${inr(Number(f.rent.depositAmount))} deposit` : 'no deposit set'}</strong></div>}
             {sells && <div><div className="mut">Sale</div><strong>{f.sale.salePrice ? inr(Number(f.sale.salePrice)) : '—'}{f.sale.openToOffers ? ' · open to offers' : ''}</strong></div>}

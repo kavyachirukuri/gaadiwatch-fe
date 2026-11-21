@@ -97,7 +97,7 @@ export function FleetView() {
 
   return (
     <main style={{ display: 'flex', flexWrap: 'wrap', minHeight: 900 }}>
-      <aside style={{ flex: '1 1 300px', maxWidth: 380, background: '#fff', borderRight: '1px solid var(--line)', display: 'flex', flexDirection: 'column' }} aria-label="Vehicles">
+      <aside className="side-panel" style={{ flex: '1 1 300px', maxWidth: 380, background: '#fff', borderRight: '1px solid var(--line)', display: 'flex', flexDirection: 'column' }} aria-label="Vehicles">
         <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10, borderBottom: '1px solid var(--line)' }}>
           <Link href="/operator" className="sm">← Dashboard</Link>
           <h1 style={{ fontSize: 22 }}>Fleet · {f.counts.all} vehicles</h1>
@@ -161,7 +161,7 @@ function FleetMap({ fleet: f, selected, onSelect }: { fleet: Fleet; selected: Ve
   const project = projectToMap([...live.map((v) => v.position!), ...fencePts], center);
   const fence = c ? [project(fencePts[0]), project(fencePts[1])] : null;
   const preview = (
-    <div className="map" style={{ height: 460 }} role="img" aria-label="Map of vehicles on trip">
+    <div className="map map-box map-h-sm" role="img" aria-label="Map of vehicles on trip">
       {fence && (
         <div className="fence" style={{ left: `${project(center).x - (fence[1].y - fence[0].y) / 2}%`, top: `${fence[0].y}%`, width: `${fence[1].y - fence[0].y}%`, height: `${fence[1].y - fence[0].y}%` }}>
           <span className="pin" style={{ left: 8, top: 8 }}>Geofence · {c!.name}</span>
@@ -192,7 +192,7 @@ function FleetMap({ fleet: f, selected, onSelect }: { fleet: Fleet; selected: Ve
   return (
     <div style={{ position: 'relative' }}>
       <GoogleMap
-        style={{ height: 460 }}
+        className="map-box map-h-sm"
         ariaLabel="Map of vehicles on trip"
         center={center}
         fallback={preview}
@@ -228,7 +228,7 @@ function Details({ v, onSimulate, onReload }: { v: Vehicle; onSimulate?: (bookin
         <h2 style={{ fontSize: 20 }}>{v.title} · {v.registration}</h2>
         {v.flags.includes('geofence') && <span className="chip er">Left {v.rules.allowedArea}</span>}
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12 }} className="sm">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(130px, 100%), 1fr))', gap: 12 }} className="sm">
         <Stat k="Speed" v={v.position ? `${Math.round(v.speedKmph ?? 0)} km/h` : '—'} />
         <Stat k="Last update" v={v.lastSeenMinutes !== null ? `${v.lastSeenMinutes} min ago` : '—'} />
         {v.batteryPct !== null && <Stat k="Battery" v={`${v.batteryPct}%`} />}
@@ -272,7 +272,8 @@ function ReplayView({ bookingId }: { bookingId: string }) {
       <strong className="sm">Trip replay · {data.title} · #{data.bookingCode}{data.renter ? ` · ${data.renter}` : ''}</strong>
       {hasGoogleMaps ? (
         <GoogleMap
-          style={{ height: 260, borderRadius: 10, overflow: 'hidden' }}
+          className="map-box map-h-xs"
+          style={{ borderRadius: 10, overflow: 'hidden' }}
           ariaLabel={`Route of trip ${data.bookingCode}`}
           center={data.points[0]}
           path={data.points}
@@ -282,7 +283,7 @@ function ReplayView({ bookingId }: { bookingId: string }) {
           ]}
         />
       ) : (
-      <div className="map" style={{ height: 220, borderRadius: 10 }}>
+      <div className="map map-box map-h-xs" style={{ borderRadius: 10 }}>
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} aria-hidden="true">
           <polyline points={pts.map((p) => `${p.x},${p.y}`).join(' ')} fill="none" stroke="#1D5FD1" strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
         </svg>

@@ -38,7 +38,7 @@ export function AdminOps() {
   return (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-        <h1 style={{ fontSize: 30 }}>Disputes, users &amp; refunds</h1>
+        <h1 style={{ fontSize: 'clamp(24px, 6vw, 30px)' }}>Disputes, users &amp; refunds</h1>
         <div className="seg" style={{ flexWrap: 'wrap' }}>
           {TABS.map((t) => <button key={t} type="button" className={tab === t ? 'on' : ''} onClick={() => setTab(t)}>{TAB_LABEL[t]}</button>)}
         </div>
@@ -102,13 +102,13 @@ function DisputeCase({ id, onDone }: { id: string; onDone: () => void }) {
   return (
     <section className="card" style={{ flex: '999 1 520px', minWidth: 0, padding: 22, display: 'flex', flexDirection: 'column', gap: 14 }} aria-label={`Dispute ${data.code}`}>
       <h2 style={{ fontSize: 22 }}>#{data.code} · {data.typeLabel} · {inr(data.amountHeld)}</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12 }} className="sm">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(150px, 100%), 1fr))', gap: 12 }} className="sm">
         <div><div className="mut xs">Booking</div><strong>#{data.booking.code} · {data.booking.title}</strong></div>
         <div><div className="mut xs">Owner{data.ownerRaised ? ' (claims)' : ''}</div><strong>{data.owner}</strong></div>
         <div><div className="mut xs">Renter{!data.ownerRaised ? ' (claims)' : ''}</div><strong>{data.booking.renterName}{data.renterRating ? ` · ${data.renterRating} ★` : ''}</strong></div>
         <div><div className="mut xs">On hold</div><strong>{inr(data.amountHeld)} of {inr(data.booking.deposit)}</strong></div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(130px, 100%), 1fr))', gap: 8 }}>
         {data.evidence.map((p) => <Thumb key={p.url} url={p.url} height={90} label={`${p.phase === 'pickup' ? 'Pick-up' : 'Return'} · ${p.label} · ${new Date(p.at).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}`} />)}
       </div>
       {data.checklistNotes.map((c) => c.notes && <p key={c.phase} className="sm"><strong>{c.phase === 'pickup' ? 'Pick-up' : 'Return'} checklist:</strong> &quot;{c.notes}&quot;</p>)}

@@ -18,13 +18,16 @@ export function HeaderAccount() {
   const [open, setOpen] = useState(false);
   const unread = useApi<{ unread: number }>(user ? '/me/notifications/unread' : null, { pollMs: 60_000 });
 
-  if (!ready) return <span style={{ width: 160 }} aria-hidden="true" />;
+  if (!ready) return <span style={{ width: 44 }} aria-hidden="true" />;
 
   if (!user) {
     return (
       <>
-        <Link className="btn bt" href="/login">Log in</Link>
-        <Link className="btn bp" href="/login">Sign up</Link>
+        <Link className="btn bt hide-sm" href="/login">Log in</Link>
+        <Link className="btn bp" href="/login">
+          <span className="hide-sm">Sign up</span>
+          <span className="only-sm">Log in</span>
+        </Link>
       </>
     );
   }
@@ -33,8 +36,8 @@ export function HeaderAccount() {
   const count = unread.data?.unread ?? 0;
   return (
     <>
-      <Link href="/trips" style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 500 }}>My trips</Link>
-      <Link href="/messages" style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 500 }}>Messages</Link>
+      <Link href="/trips" className="hide-md" style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 500 }}>My trips</Link>
+      <Link href="/messages" className="hide-md" style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 500 }}>Messages</Link>
       <div style={{ position: 'relative' }}>
         <button
           type="button"
@@ -53,7 +56,7 @@ export function HeaderAccount() {
           <div
             className="card"
             role="menu"
-            style={{ position: 'absolute', right: 0, top: 48, minWidth: 230, padding: 8, display: 'flex', flexDirection: 'column', zIndex: 20, boxShadow: '0 8px 24px rgba(0,0,0,.12)' }}
+            style={{ position: 'absolute', right: 0, top: 48, minWidth: 230, maxWidth: 'calc(100vw - 32px)', maxHeight: 'calc(100vh - 80px)', overflowY: 'auto', padding: 8, display: 'flex', flexDirection: 'column', zIndex: 20, boxShadow: '0 8px 24px rgba(0,0,0,.12)' }}
           >
             <div style={{ padding: '8px 10px' }}>
               <strong>{user.name ?? 'Your account'}</strong>

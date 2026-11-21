@@ -79,7 +79,7 @@ export function ChecklistView() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <Link href={data.role === 'operator' ? '/operator/requests' : `/trips?id=${b.id}`} className="sm">← Back</Link>
-          <h1 style={{ fontSize: 32 }}>Hand-over checklist</h1>
+          <h1 style={{ fontSize: 'clamp(24px, 6vw, 32px)' }}>Hand-over checklist</h1>
           <p className="mut">Booking {b.code} · {b.title} · {b.registration} · both renter and operator confirm</p>
         </div>
         <div className="seg" role="tablist" aria-label="Checklist">
@@ -164,7 +164,7 @@ function ChecklistForm({ data, phase, onSaved }: { data: Data; phase: 'pickup' |
         <h2 id="ph" style={{ fontSize: 20 }}>1. Vehicle photos</h2>
         <span className={`chip ${photos.length >= data.requiredPhotos ? 'ok' : 'wa'}`}>{photos.length} of {data.requiredPhotos} required</span>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(150px, 100%), 1fr))', gap: 12 }}>
         {data.photoLabels.map((label) => {
           const p = photos.find((x) => x.label === label);
           return p ? (
@@ -183,7 +183,7 @@ function ChecklistForm({ data, phase, onSaved }: { data: Data; phase: 'pickup' |
 
       <hr className="hr" />
       <h2 style={{ fontSize: 20 }}>2. Readings</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 14 }}>
         <div>
           <label className="lbl" htmlFor="od">Odometer (km)</label>
           <input id="od" className="in" inputMode="numeric" value={odo} disabled={locked} onChange={(e) => { setOdo(e.target.value); touch(); }} />
@@ -241,7 +241,7 @@ function ChecklistForm({ data, phase, onSaved }: { data: Data; phase: 'pickup' |
 
       <hr className="hr" />
       <h2 style={{ fontSize: 20 }}>3. Both confirm</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))', gap: 12 }}>
         <div className="li"><span className={`chip ${side?.operatorConfirmedAt ? 'ok' : ''}`}>{side?.operatorConfirmedAt ? '✓' : '…'}</span><div style={{ flex: 1 }}><strong>Operator · {b.operatorName}</strong><div className="xs mut">{side?.operatorConfirmedAt ? `Confirmed ${fmtDateTime(side.operatorConfirmedAt)}` : 'Not confirmed yet'}</div></div></div>
         <div className="li"><span className={`chip ${side?.renterConfirmedAt ? 'ok' : ''}`}>{side?.renterConfirmedAt ? '✓' : '…'}</span><div style={{ flex: 1 }}><strong>Renter · {b.renterName}</strong><div className="xs mut">{side?.renterConfirmedAt ? `Confirmed ${fmtDateTime(side.renterConfirmedAt)}` : 'Not confirmed yet'}</div></div></div>
       </div>

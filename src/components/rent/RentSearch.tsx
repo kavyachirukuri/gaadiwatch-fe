@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { SaveSearchButton } from '@/components/SaveSearchButton';
 import { GoogleMap } from '@/components/map/GoogleMap';
 import { hasGoogleMaps } from '@/lib/google-maps';
-import { inr } from '@/lib/format';
+import { inr, km } from '@/lib/format';
 import { typeOptions, useMeta } from '@/lib/use-meta';
 import {
   fuelLabel,
@@ -79,6 +79,7 @@ export function RentSearch() {
   const [view, setView] = useState<View>('both');
   const [page, setPage] = useState(1);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false); // phones and tablets only
 
   // Server data
   const [data, setData] = useState<Page<RentResult> | null>(null);
@@ -145,7 +146,7 @@ export function RentSearch() {
   const cityName = (key: string) => meta?.cities.find((c) => c.key === key)?.name ?? key;
   const project = data ? projectToMap(items, data.center) : null;
   const preview = (
-              <div className="map card" style={{ flex: '1 1 380px', height: view === 'map' ? 720 : 640, borderRadius: 14 }} role="region" aria-label="Map of results on this page">
+              <div className={`map card map-box ${view === 'map' ? 'map-h-lg' : 'map-h-md'}`} style={{ flex: '1 1 380px', borderRadius: 14 }} role="region" aria-label="Map of results on this page">
                 <div className="road" style={{ left: -40, top: 300, width: 800, transform: 'rotate(-18deg)' }} />
                 <div className="road" style={{ left: 200, top: -20, width: 700, transform: 'rotate(72deg)' }} />
                 {project && items.map((l) => {
@@ -233,7 +234,10 @@ export function RentSearch() {
 
       <main className="wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
         {/* Filters */}
-        <aside className="card" aria-label="Filters" style={{ flex: '1 1 240px', maxWidth: 280, padding: 20, display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <button type="button" className="btn bs filters-toggle" style={{ flex: '1 1 100%' }} aria-expanded={filtersOpen} aria-controls="filters" onClick={() => setFiltersOpen((o) => !o)}>
+          {filtersOpen ? 'Hide filters' : 'Filters'}
+        </button>
+        <aside id="filters" className={`card filters${filtersOpen ? ' open' : ''}`} aria-label="Filters" style={{ flex: '1 1 240px', maxWidth: 280, padding: 20, display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <strong>Filters</strong>
             <button type="button" className="btn bt sm" style={{ minHeight: 32, padding: 0 }} onClick={clearFilters}>Clear all</button>
@@ -326,7 +330,7 @@ export function RentSearch() {
             {view !== 'map' && (
               <div style={{ flex: '1 1 420px', display: 'flex', flexDirection: 'column', gap: 12, minWidth: 0 }}>
                 {!loading && !error && items.length === 0 ? (
-                  <div className="card" style={{ padding: 28, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center' }}>
+                  <div className="card" style={{ padding: 'clamp(16px, 4vw, 28px)', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center' }}>
                     <strong>No vehicles match these filters</strong>
                     <p className="sm mut">Try a higher price, more fuel types, other dates, or turn off some toggles.</p>
                     <button type="button" className="btn bs" onClick={clearFilters}>Clear all filters</button>
@@ -352,8 +356,8 @@ export function RentSearch() {
             {view !== 'list' && (
               hasGoogleMaps && data ? (
                 <GoogleMap
-                  className="card"
-                  style={{ flex: '1 1 380px', height: view === 'map' ? 720 : 640, borderRadius: 14, overflow: 'hidden' }}
+                  className={`card map-box ${view === 'map' ? 'map-h-lg' : 'map-h-md'}`}
+                  style={{ flex: '1 1 380px', borderRadius: 14, overflow: 'hidden' }}
                   ariaLabel="Map of results on this page"
                   center={data.center}
                   fallback={preview}
@@ -396,14 +400,14 @@ function ResultCard({ listing: l, days, active, onHover, dates }: { listing: Ren
     >
       {l.photo ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={l.photo} alt="" style={{ width: 150, height: 112, flex: 'none', objectFit: 'cover', borderRadius: 10 }} />
+        <img src={l.photo} alt="" className="rc-photo" style={{ objectFit: 'cover', borderRadius: 10 }} />
       ) : (
-        <div className="ph" style={{ width: 150, height: 112, flex: 'none' }}>Photo</div>
+        <div className="ph rc-photo">Photo</div>
       )}
       <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: 6, minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
           <strong>{l.title} · {l.year}</strong>
-          <span className="sm mut">{l.distanceKm} km</span>
+          <span className="sm mut" style={{ whiteSpace: 'nowrap' }}>{km(l.distanceKm)} km</span>
         </div>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           <span className={`chip ${l.gpsTracked ? 'tr' : ''}`}>{TRACKING_LABEL[l.trackingSource]}</span>

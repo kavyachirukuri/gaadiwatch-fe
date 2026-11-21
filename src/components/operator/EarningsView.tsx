@@ -54,7 +54,7 @@ export function EarningsView() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <Link href="/operator" className="sm">← Dashboard</Link>
-          <h1 style={{ fontSize: 32 }}>Earnings &amp; payouts</h1>
+          <h1 style={{ fontSize: 'clamp(24px, 6vw, 32px)' }}>Earnings &amp; payouts</h1>
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <select className="in" style={{ width: 'auto' }} aria-label="Month" value={month} onChange={(ev) => setMonth(ev.target.value)}>
@@ -64,7 +64,7 @@ export function EarningsView() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(200px, 100%), 1fr))', gap: 14 }}>
         <div className="card kpi"><span className="sm mut">Gross bookings</span><b>{inr(e.gross)}</b><span className="xs mut">{e.rentals} completed rentals</span></div>
         <div className="card kpi"><span className="sm mut">Commission</span><b>{inr(e.commission)}</b><span className="xs mut">{launch ? `Launch offer · saves ${inr(e.commissionSaved)}` : `${Math.round(e.commissionRate * 100)}% of rent`}</span></div>
         <div className="card kpi"><span className="sm mut">Damage recovered</span><b>{inr(e.damageRecovered)}</b><span className="xs mut">{e.claimsSettled} settled claim{e.claimsSettled === 1 ? '' : 's'}</span></div>

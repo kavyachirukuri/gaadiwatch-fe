@@ -79,7 +79,7 @@ export function MessagesView() {
 
   return (
     <main className="wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 0, paddingTop: 24 }}>
-      <aside className="card" style={{ flex: '1 1 280px', maxWidth: selected ? 340 : undefined, borderRadius: selected ? '14px 0 0 14px' : 14, display: 'flex', flexDirection: 'column' }} aria-label="Conversations">
+      <aside className={`card msg-list${selected ? ' has-sel' : ''}`} style={{ flex: '1 1 280px', display: 'flex', flexDirection: 'column' }} aria-label="Conversations">
         <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 10, borderBottom: '1px solid var(--line)' }}>
           <h1 style={{ fontSize: 22 }}>Messages</h1>
           <div className="seg" style={{ flexWrap: 'wrap' }}>
@@ -146,8 +146,8 @@ function ThreadView({ id, onChange, onClose }: { id: string; onChange: () => voi
     endRef.current?.scrollIntoView({ block: 'end' });
   }, [count]);
 
-  if (error && !data) return <section className="card" style={{ flex: '999 1 480px', padding: 24 }}><div className="note r">{error}</div></section>;
-  if (!data) return <section className="card" style={{ flex: '999 1 480px', padding: 24 }}><p className="mut">Loading…</p></section>;
+  if (error && !data) return <section className="card" style={{ flex: '999 1 480px', padding: 'clamp(16px, 4vw, 24px)' }}><div className="note r">{error}</div></section>;
+  if (!data) return <section className="card" style={{ flex: '999 1 480px', padding: 'clamp(16px, 4vw, 24px)' }}><p className="mut">Loading…</p></section>;
 
   async function act(fn: () => Promise<Thread | unknown>, reset?: () => void) {
     setBusy(true);
@@ -169,7 +169,7 @@ function ThreadView({ id, onChange, onClose }: { id: string; onChange: () => voi
   const isSale = data.kind === 'sale';
   return (
     <>
-      <section className="card" style={{ flex: '999 1 480px', minWidth: 0, borderRadius: 0, display: 'flex', flexDirection: 'column', minHeight: 640 }} aria-label={`Conversation with ${data.other.name}`}>
+      <section className="card msg-thread" style={{ flex: '999 1 480px', minWidth: 0, display: 'flex', flexDirection: 'column' }} aria-label={`Conversation with ${data.other.name}`}>
         <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--line)', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
           <button type="button" className="btn bt" onClick={onClose} aria-label="Back to conversations" style={{ minHeight: 36, padding: '0 10px' }}>←</button>
           <div className="av">{data.other.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()}</div>
@@ -192,14 +192,14 @@ function ThreadView({ id, onChange, onClose }: { id: string; onChange: () => voi
             ))}
         </div>
 
-        <div style={{ flex: 1, padding: 18, display: 'flex', flexDirection: 'column', gap: 10, background: 'var(--ground)', overflowY: 'auto', maxHeight: 620 }}>
+        <div className="msg-scroll" style={{ flex: 1, padding: 16, display: 'flex', flexDirection: 'column', gap: 10, background: 'var(--ground)', overflowY: 'auto' }}>
           {data.messages.map((m) => {
             if (m.kind === 'system') return <div key={m.id} className="note sm" style={{ alignSelf: 'center', maxWidth: 520 }}>{m.body}</div>;
             if (m.offer) {
               const o = m.offer;
               const label = o.fromSeller ? (m.mine ? 'Your counter offer' : 'Counter offer from seller') : m.mine ? 'Your offer' : 'Offer from buyer';
               return (
-                <div key={m.id} className="card" style={{ alignSelf: m.mine ? 'flex-end' : 'flex-start', padding: 14, display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 340, borderColor: o.canAnswer ? 'var(--green)' : undefined, borderWidth: o.canAnswer ? 2 : undefined }}>
+                <div key={m.id} className="card" style={{ alignSelf: m.mine ? 'flex-end' : 'flex-start', padding: 14, display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 'min(340px, 85%)', borderColor: o.canAnswer ? 'var(--green)' : undefined, borderWidth: o.canAnswer ? 2 : undefined }}>
                   <span className="k">{label}</span>
                   <strong style={{ fontSize: 22 }}>{inr(o.amount)}</strong>
                   {o.status === 'pending' && o.expiresAt && <span className="sm mut">Valid until {new Date(o.expiresAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}</span>}
@@ -217,7 +217,7 @@ function ThreadView({ id, onChange, onClose }: { id: string; onChange: () => voi
             if (m.testRide) {
               const r = m.testRide;
               return (
-                <div key={m.id} className="card" style={{ alignSelf: m.mine ? 'flex-end' : 'flex-start', padding: 14, display: 'flex', flexDirection: 'column', gap: 6, maxWidth: 320, borderColor: '#1D5FD1' }}>
+                <div key={m.id} className="card" style={{ alignSelf: m.mine ? 'flex-end' : 'flex-start', padding: 14, display: 'flex', flexDirection: 'column', gap: 6, maxWidth: 'min(320px, 85%)', borderColor: '#1D5FD1' }}>
                   <span className="k">Test ride</span>
                   <strong>{new Date(r.at).toLocaleString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })}</strong>
                   <span className="sm mut">{r.place} · bring your driving licence</span>
