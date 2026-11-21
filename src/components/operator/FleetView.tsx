@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { api, errorMessage, useRequireAuth } from '@/lib/auth';
 import { useApi } from '@/lib/use-api';
 import { projectToMap, TRACKING_LABEL } from '@/lib/listings-api';
+import { GoogleMap } from '@/components/map/GoogleMap';
+import { hasGoogleMaps } from '@/lib/google-maps';
 
 type Vehicle = {
   vehicleId: string;
@@ -158,7 +160,7 @@ function FleetMap({ fleet: f, selected, onSelect }: { fleet: Fleet; selected: Ve
   const center = c ?? live[0]?.position ?? { lat: 12.97, lng: 77.59 };
   const project = projectToMap([...live.map((v) => v.position!), ...fencePts], center);
   const fence = c ? [project(fencePts[0]), project(fencePts[1])] : null;
-  return (
+  const preview = (
     <div className="map" style={{ height: 460 }} role="img" aria-label="Map of vehicles on trip">
       {fence && (
         <div className="fence" style={{ left: `${project(center).x - (fence[1].y - fence[0].y) / 2}%`, top: `${fence[0].y}%`, width: `${fence[1].y - fence[0].y}%`, height: `${fence[1].y - fence[0].y}%` }}>
@@ -184,6 +186,34 @@ function FleetMap({ fleet: f, selected, onSelect }: { fleet: Fleet; selected: Ve
         return <span className="pin on" style={{ left: `calc(${p.x}% + 14px)`, top: `calc(${p.y}% - 10px)` }}>{selected.title} · {Math.round(selected.speedKmph ?? 0)} km/h</span>;
       })()}
       {live.length === 0 && <span className="pin" style={{ left: '40%', top: '45%' }}>No vehicles on trip right now</span>}
+    </div>
+  );
+  if (!hasGoogleMaps) return preview;
+  return (
+    <div style={{ position: 'relative' }}>
+      <GoogleMap
+        style={{ height: 460 }}
+        ariaLabel="Map of vehicles on trip"
+        center={center}
+        fallback={preview}
+        circle={c ? { lat: c.lat, lng: c.lng, radiusKm: c.radiusKm } : null}
+        markers={live.map((v) => ({
+          id: v.vehicleId,
+          kind: 'vehicle' as const,
+          lat: v.position!.lat,
+          lng: v.position!.lng,
+          alert: v.flags.length > 0,
+          active: selected?.vehicleId === v.vehicleId,
+          title: `${v.title} ${Math.round(v.speedKmph ?? 0)} km/h`,
+          onClick: () => onSelect(v.vehicleId),
+        }))}
+      />
+      {live.length === 0 && (
+        <span className="chip" style={{ position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)', zIndex: 3, background: '#fff' }}>
+          No vehicles on trip right now
+        </span>
+      )}
+      {c && <span className="chip" style={{ position: 'absolute', bottom: 14, left: 14, zIndex: 3, background: '#fff' }}>Geofence · {c.name}</span>}
     </div>
   );
 }
@@ -240,6 +270,18 @@ function ReplayView({ bookingId }: { bookingId: string }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <strong className="sm">Trip replay · {data.title} · #{data.bookingCode}{data.renter ? ` · ${data.renter}` : ''}</strong>
+      {hasGoogleMaps ? (
+        <GoogleMap
+          style={{ height: 260, borderRadius: 10, overflow: 'hidden' }}
+          ariaLabel={`Route of trip ${data.bookingCode}`}
+          center={data.points[0]}
+          path={data.points}
+          markers={[
+            { id: 'start', kind: 'tag', lat: data.points[0].lat, lng: data.points[0].lng, label: 'Start', title: 'Trip start' },
+            { id: 'now', kind: 'tag', lat: data.points.at(-1)!.lat, lng: data.points.at(-1)!.lng, label: 'Now', active: true, title: 'Latest position' },
+          ]}
+        />
+      ) : (
       <div className="map" style={{ height: 220, borderRadius: 10 }}>
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} aria-hidden="true">
           <polyline points={pts.map((p) => `${p.x},${p.y}`).join(' ')} fill="none" stroke="#1D5FD1" strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
@@ -247,6 +289,7 @@ function ReplayView({ bookingId }: { bookingId: string }) {
         <span className="pin" style={{ left: `${pts[0].x}%`, top: `${pts[0].y}%` }}>Start</span>
         <span className="pin on" style={{ left: `${pts.at(-1)!.x}%`, top: `${pts.at(-1)!.y}%` }}>Now</span>
       </div>
+      )}
       <div className="sm" style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
         <span>{data.from ? time(data.from) : ''} → {data.to ? time(data.to) : ''} · {data.distanceKm} km</span>
         <span>Max speed {data.maxSpeedKmph} km/h</span>

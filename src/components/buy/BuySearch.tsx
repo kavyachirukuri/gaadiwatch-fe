@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SaveSearchButton } from '@/components/SaveSearchButton';
+import { GoogleMap } from '@/components/map/GoogleMap';
+import { hasGoogleMaps } from '@/lib/google-maps';
 import { inrShort } from '@/lib/format';
 import { typeOptions, useMeta } from '@/lib/use-meta';
 import { fuelLabel, projectToMap, searchBuy, type BuyResult, type Page } from '@/lib/listings-api';
@@ -129,6 +131,26 @@ export function BuySearch() {
   const budgetLabel = aMin === 0 && aMax >= NO_MAX ? 'Any budget' : `${inrShort(aMin)} – ${aMax >= NO_MAX ? 'any' : inrShort(aMax)}`;
   const centreName = data?.center.name ?? (aArea.split(',')[0] || 'you');
   const project = data ? projectToMap(items, data.center) : null;
+  const preview = (
+                <div className="map card" style={{ flex: '2 1 420px', height: 620, borderRadius: 14 }} role="region" aria-label="Map of vehicles on this page">
+                  <div className="road" style={{ left: -40, top: 280, width: 900, transform: 'rotate(-12deg)' }} />
+                  <div className="road" style={{ left: 260, top: -20, width: 700, transform: 'rotate(70deg)' }} />
+                  {project && items.map((l) => {
+                    const pos = project(l);
+                    return (
+                      <button key={l.id} type="button" className={`pin ${activeId === l.id ? 'on' : ''}`}
+                        style={{ left: `${pos.x}%`, top: `${pos.y}%`, cursor: 'pointer', zIndex: activeId === l.id ? 2 : 1 }}
+                        aria-label={`${l.title}, ${inrShort(l.price)}`}
+                        onMouseEnter={() => setActiveId(l.id)} onFocus={() => setActiveId(l.id)} onClick={() => setActiveId(l.id)}>
+                        {inrShort(l.price).replace(' lakh', 'L')}
+                      </button>
+                    );
+                  })}
+                  <span className="chip" style={{ position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)', zIndex: 3, background: '#fff' }}>
+                    Map preview · real map coming soon
+                  </span>
+                </div>
+  );
 
   function applySearch(e: React.FormEvent) {
     e.preventDefault();
@@ -292,24 +314,23 @@ export function BuySearch() {
               </div>
             ) : (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-start' }}>
-                <div className="map card" style={{ flex: '2 1 420px', height: 620, borderRadius: 14 }} role="region" aria-label="Map of vehicles on this page">
-                  <div className="road" style={{ left: -40, top: 280, width: 900, transform: 'rotate(-12deg)' }} />
-                  <div className="road" style={{ left: 260, top: -20, width: 700, transform: 'rotate(70deg)' }} />
-                  {project && items.map((l) => {
-                    const pos = project(l);
-                    return (
-                      <button key={l.id} type="button" className={`pin ${activeId === l.id ? 'on' : ''}`}
-                        style={{ left: `${pos.x}%`, top: `${pos.y}%`, cursor: 'pointer', zIndex: activeId === l.id ? 2 : 1 }}
-                        aria-label={`${l.title}, ${inrShort(l.price)}`}
-                        onMouseEnter={() => setActiveId(l.id)} onFocus={() => setActiveId(l.id)} onClick={() => setActiveId(l.id)}>
-                        {inrShort(l.price).replace(' lakh', 'L')}
-                      </button>
-                    );
-                  })}
-                  <span className="chip" style={{ position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)', zIndex: 3, background: '#fff' }}>
-                    Map preview · real map coming soon
-                  </span>
-                </div>
+                {hasGoogleMaps && data ? (
+                  <GoogleMap
+                    className="card"
+                    style={{ flex: '2 1 420px', height: 620, borderRadius: 14, overflow: 'hidden' }}
+                    ariaLabel="Map of vehicles on this page"
+                    center={data.center}
+                    fallback={preview}
+                    markers={[
+                      { id: 'centre', kind: 'centre', lat: data.center.lat, lng: data.center.lng, title: `Search centre: ${data.center.name}` },
+                      ...items.map((l) => ({
+                        id: l.id, kind: 'price' as const, lat: l.lat, lng: l.lng, label: inrShort(l.price).replace(' lakh', 'L'), active: activeId === l.id,
+                        title: `${l.title}, ${inrShort(l.price)}`,
+                        onHover: () => setActiveId(l.id), onClick: () => setActiveId(l.id),
+                      })),
+                    ]}
+                  />
+                ) : preview}
                 <div style={{ flex: '1 1 280px', minWidth: 0 }}>
                   {(() => {
                     const picked = items.find((l) => l.id === activeId);

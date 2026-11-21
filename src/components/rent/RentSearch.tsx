@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { SaveSearchButton } from '@/components/SaveSearchButton';
+import { GoogleMap } from '@/components/map/GoogleMap';
+import { hasGoogleMaps } from '@/lib/google-maps';
 import { inr } from '@/lib/format';
 import { typeOptions, useMeta } from '@/lib/use-meta';
 import {
@@ -142,6 +144,36 @@ export function RentSearch() {
   const area = data?.center.name ?? (appliedLocation.split(',')[0] || 'you');
   const cityName = (key: string) => meta?.cities.find((c) => c.key === key)?.name ?? key;
   const project = data ? projectToMap(items, data.center) : null;
+  const preview = (
+              <div className="map card" style={{ flex: '1 1 380px', height: view === 'map' ? 720 : 640, borderRadius: 14 }} role="region" aria-label="Map of results on this page">
+                <div className="road" style={{ left: -40, top: 300, width: 800, transform: 'rotate(-18deg)' }} />
+                <div className="road" style={{ left: 200, top: -20, width: 700, transform: 'rotate(72deg)' }} />
+                {project && items.map((l) => {
+                  const pos = project(l);
+                  return (
+                    <button
+                      key={l.id}
+                      type="button"
+                      className={`pin ${activeId === l.id ? 'on' : ''}`}
+                      style={{ left: `${pos.x}%`, top: `${pos.y}%`, cursor: 'pointer', zIndex: activeId === l.id ? 2 : 1 }}
+                      aria-label={`${l.title}, ${inr(l.pricePerDay)} per day`}
+                      onMouseEnter={() => setActiveId(l.id)}
+                      onFocus={() => setActiveId(l.id)}
+                      onClick={() => router.push(`/listings/${l.id}`)}
+                    >
+                      {inr(l.pricePerDay)}
+                    </button>
+                  );
+                })}
+                {project && data && (() => {
+                  const me = project(data.center);
+                  return <div role="img" aria-label={`Search centre: ${data.center.name}`} style={{ position: 'absolute', left: `${me.x}%`, top: `${me.y}%`, width: 16, height: 16, borderRadius: '50%', background: 'var(--ink)', border: '3px solid #fff' }} />;
+                })()}
+                <span className="chip" style={{ position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)', zIndex: 3, background: '#fff' }}>
+                  Map preview · real map coming soon
+                </span>
+              </div>
+  );
 
   function applySearch(e: React.FormEvent) {
     e.preventDefault();
@@ -318,34 +350,23 @@ export function RentSearch() {
             )}
 
             {view !== 'list' && (
-              <div className="map card" style={{ flex: '1 1 380px', height: view === 'map' ? 720 : 640, borderRadius: 14 }} role="region" aria-label="Map of results on this page">
-                <div className="road" style={{ left: -40, top: 300, width: 800, transform: 'rotate(-18deg)' }} />
-                <div className="road" style={{ left: 200, top: -20, width: 700, transform: 'rotate(72deg)' }} />
-                {project && items.map((l) => {
-                  const pos = project(l);
-                  return (
-                    <button
-                      key={l.id}
-                      type="button"
-                      className={`pin ${activeId === l.id ? 'on' : ''}`}
-                      style={{ left: `${pos.x}%`, top: `${pos.y}%`, cursor: 'pointer', zIndex: activeId === l.id ? 2 : 1 }}
-                      aria-label={`${l.title}, ${inr(l.pricePerDay)} per day`}
-                      onMouseEnter={() => setActiveId(l.id)}
-                      onFocus={() => setActiveId(l.id)}
-                      onClick={() => router.push(`/listings/${l.id}`)}
-                    >
-                      {inr(l.pricePerDay)}
-                    </button>
-                  );
-                })}
-                {project && data && (() => {
-                  const me = project(data.center);
-                  return <div role="img" aria-label={`Search centre: ${data.center.name}`} style={{ position: 'absolute', left: `${me.x}%`, top: `${me.y}%`, width: 16, height: 16, borderRadius: '50%', background: 'var(--ink)', border: '3px solid #fff' }} />;
-                })()}
-                <span className="chip" style={{ position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)', zIndex: 3, background: '#fff' }}>
-                  Map preview · real map coming soon
-                </span>
-              </div>
+              hasGoogleMaps && data ? (
+                <GoogleMap
+                  className="card"
+                  style={{ flex: '1 1 380px', height: view === 'map' ? 720 : 640, borderRadius: 14, overflow: 'hidden' }}
+                  ariaLabel="Map of results on this page"
+                  center={data.center}
+                  fallback={preview}
+                  markers={[
+                    { id: 'centre', kind: 'centre', lat: data.center.lat, lng: data.center.lng, title: `Search centre: ${data.center.name}` },
+                    ...items.map((l) => ({
+                      id: l.id, kind: 'price' as const, lat: l.lat, lng: l.lng, label: inr(l.pricePerDay), active: activeId === l.id,
+                      title: `${l.title}, ${inr(l.pricePerDay)} per day`,
+                      onHover: () => setActiveId(l.id), onClick: () => router.push(`/listings/${l.id}`),
+                    })),
+                  ]}
+                />
+              ) : preview
             )}
           </div>
         </section>
