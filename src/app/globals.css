@@ -218,3 +218,17 @@ button, input, select, textarea { font: inherit; }
 @media (min-width: 640px) { .rc-photo { width: 150px; height: 112px; } }
 
 .nav-dark .logo, .nav-dark .logo:hover { color: #fff; }
+
+/* Multi-step forms (List a vehicle): step links */
+.stepper { flex: 1 1 100%; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.stepper-list { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin: 0 -16px; padding: 0 16px; }
+.stepper-list::-webkit-scrollbar { display: none; }
+.stepper-list a { display: flex; flex: none; gap: 8px; align-items: center; padding: 6px 12px 6px 6px; border-radius: 999px; background: #fff; border: 1px solid var(--line); text-decoration: none; color: var(--ink); white-space: nowrap; }
+/* Jumping to a step leaves room above its heading */
+[id^="s"].card { scroll-margin-top: 16px; }
+@media (min-width: 1024px) {
+  /* Sticky only where it has its own column, with a solid background so nothing shows through */
+  .stepper { flex: 1 1 220px; max-width: 260px; position: sticky; top: 16px; align-self: flex-start; background: var(--ground); z-index: 2; }
+  .stepper-list { flex-direction: column; overflow: visible; margin: 0; padding: 0; }
+  .stepper-list a { padding: 8px; border: 0; background: transparent; border-radius: 10px; white-space: normal; }
+}

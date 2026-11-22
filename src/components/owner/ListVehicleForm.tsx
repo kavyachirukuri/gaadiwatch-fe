@@ -263,14 +263,18 @@ function Editor({ user, saved }: { user: Me; saved: Saved | null }) {
 
   return (
     <div className="wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 28, alignItems: 'flex-start' }}>
-      <nav aria-label="Steps" className="sm" style={{ flex: '1 1 220px', maxWidth: 260, display: 'flex', flexDirection: 'column', gap: 6, position: 'sticky', top: 16 }}>
-        <h1 style={{ fontSize: 22, marginBottom: 8 }}>{saved ? 'Edit listing' : 'List a vehicle'}</h1>
-        {steps.map((label, i) => (
-          <a key={label} href={`#s${i + 1}`} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: 8, textDecoration: 'none', color: 'var(--ink)' }}>
-            <span className="step">{i + 1}</span>{label}
-          </a>
-        ))}
-        <button type="button" className="btn bs" disabled={busy} onClick={() => void save(false)} style={{ marginTop: 8 }}>Save draft</button>
+      {/* Phones/tablets: title + a scrollable row of steps at the top. Desktops: a column that stays in view. */}
+      <nav aria-label="Steps" className="sm stepper">
+        <h1 style={{ fontSize: 22 }}>{saved ? 'Edit listing' : 'List a vehicle'}</h1>
+        <div className="stepper-list">
+          {steps.map((label, i) => (
+            <a key={label} href={`#s${i + 1}`}>
+              <span className="step">{i + 1}</span>
+              {label}
+            </a>
+          ))}
+        </div>
+        <button type="button" className="btn bs hide-md" disabled={busy} onClick={() => void save(false)}>Save draft</button>
       </nav>
 
       <main className="main" style={{ gap: 24 }}>
