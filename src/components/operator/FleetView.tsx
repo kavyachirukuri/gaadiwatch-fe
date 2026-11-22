@@ -13,6 +13,7 @@ type Vehicle = {
   vehicleId: string;
   listingId: string | null;
   title: string;
+  type?: string; // vehicle type for the map icon (older servers don't send it)
   registration: string;
   source: keyof typeof TRACKING_LABEL;
   status: 'on_trip' | 'late' | 'idle' | 'offline';
@@ -22,6 +23,7 @@ type Vehicle = {
   renter: string | null;
   returnDue: string | null;
   position: { lat: number; lng: number } | null;
+  heading?: number | null;
   speedKmph: number | null;
   batteryPct: number | null;
   lastSeenMinutes: number | null;
@@ -72,7 +74,7 @@ const time = (iso: string) => new Date(iso).toLocaleTimeString('en-IN', { hour: 
 
 export function FleetView() {
   const { user } = useRequireAuth();
-  const fleet = useApi<Fleet>(user ? '/operator/fleet' : null, { pollMs: 15_000 });
+  const fleet = useApi<Fleet>(user ? '/operator/fleet' : null, { pollMs: 5_000 }); // live: refresh every 5 s
   const [filter, setFilter] = useState<(typeof FILTERS)[number]['key']>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -203,6 +205,8 @@ function FleetMap({ fleet: f, selected, onSelect }: { fleet: Fleet; selected: Ve
           lat: v.position!.lat,
           lng: v.position!.lng,
           alert: v.flags.length > 0,
+          vehicleType: v.type,
+          heading: v.heading,
           active: selected?.vehicleId === v.vehicleId,
           title: `${v.title} ${Math.round(v.speedKmph ?? 0)} km/h`,
           onClick: () => onSelect(v.vehicleId),

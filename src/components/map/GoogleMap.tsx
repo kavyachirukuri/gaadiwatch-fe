@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { loadGoogleMaps, MAP_ID } from "@/lib/google-maps";
+import { vehicleIconSvg } from "@/lib/vehicle-icons";
 
 type LatLng = { lat: number; lng: number };
 
@@ -13,6 +14,10 @@ export type MapMarker = LatLng & {
   label?: string; // text shown on price pills and tags
   active?: boolean;
   alert?: boolean;
+  /** Vehicle type (scooter, bike, car…) for the icon on price pills and live vehicles */
+  vehicleType?: string;
+  /** Direction of travel in degrees from north, for live vehicles */
+  heading?: number | null;
   onClick?: () => void;
   onHover?: () => void;
 };
@@ -29,8 +34,9 @@ type Props = {
   fallback?: React.ReactNode;
 };
 
+// What a marker looks like; position and heading are left out because they change in place (smooth movement)
 const sig = (m: MapMarker) =>
-  `${m.id}|${m.kind}|${m.lat}|${m.lng}|${m.label ?? ""}|${m.active ? 1 : 0}|${m.alert ? 1 : 0}`;
+  `${m.id}|${m.kind}|${m.label ?? ""}|${m.active ? 1 : 0}|${m.alert ? 1 : 0}|${m.vehicleType ?? ""}`;
 
 function markerElement(m: MapMarker) {
   const el = document.createElement(m.onClick ? "button" : "span");
@@ -39,9 +45,13 @@ function markerElement(m: MapMarker) {
   el.title = m.title;
   if (m.kind === "price") {
     el.className = `gm-pin${m.active ? " on" : ""}`;
-    el.textContent = m.label ?? "";
+    if (m.vehicleType) el.innerHTML = vehicleIconSvg(m.vehicleType, 15);
+    el.append(document.createTextNode(m.label ?? ""));
   } else if (m.kind === "vehicle") {
-    el.className = `gm-veh${m.alert ? " al" : ""}${m.active ? " on" : ""}`;
+    // A round badge with the vehicle icon and an arrow showing the direction of travel
+    el.className = `gm-car${m.alert ? " al" : ""}${m.active ? " on" : ""}`;
+    el.innerHTML = `<span class="gm-dir"></span><span class="gm-badge">${vehicleIconSvg(m.vehicleType, 20)}</span>`;
+    setHeading(el, m.heading);
   } else if (m.kind === "centre") {
     el.className = "gm-me";
   } else {
@@ -49,6 +59,43 @@ function markerElement(m: MapMarker) {
     el.textContent = m.label ?? "";
   }
   return el;
+}
+
+function setHeading(el: HTMLElement, heading: number | null | undefined) {
+  const dir = el.querySelector<HTMLElement>(".gm-dir");
+  if (!dir) return;
+  if (heading === null || heading === undefined) return; // keep the last direction while stopped
+  dir.style.display = "block";
+  dir.style.transform = `rotate(${heading}deg)`;
+}
+
+/** Glides a marker to a new position instead of jumping (about one second). */
+function glide(
+  marker: google.maps.marker.AdvancedMarkerElement,
+  to: LatLng,
+  anim: Map<google.maps.marker.AdvancedMarkerElement, number>,
+) {
+  const p = marker.position;
+  const from =
+    p instanceof google.maps.LatLng
+      ? { lat: p.lat(), lng: p.lng() }
+      : p
+        ? { lat: Number(p.lat), lng: Number(p.lng) }
+        : to;
+  if (from.lat === to.lat && from.lng === to.lng) return;
+  const prev = anim.get(marker);
+  if (prev) cancelAnimationFrame(prev);
+  const t0 = performance.now();
+  const frame = (t: number) => {
+    const k = Math.min(1, (t - t0) / 1000);
+    marker.position = {
+      lat: from.lat + (to.lat - from.lat) * k,
+      lng: from.lng + (to.lng - from.lng) * k,
+    };
+    if (k < 1) anim.set(marker, requestAnimationFrame(frame));
+    else anim.delete(marker);
+  };
+  anim.set(marker, requestAnimationFrame(frame));
 }
 
 // Less padding around the pins on small screens, so they don't get squeezed together
@@ -75,6 +122,9 @@ export function GoogleMap({
     >(),
   );
   const latest = useRef(markers);
+  const anim = useRef(
+    new Map<google.maps.marker.AdvancedMarkerElement, number>(),
+  );
   const shapes = useRef<{
     circle?: google.maps.Circle;
     line?: google.maps.Polyline;
@@ -125,7 +175,13 @@ export function GoogleMap({
       keep.add(mk.id);
       const s = sig(mk);
       const old = drawn.current.get(mk.id);
-      if (old && old.sig === s) continue;
+      if (old && old.sig === s) {
+        // Same marker, maybe moved: glide it there and turn the arrow
+        glide(old.marker, { lat: mk.lat, lng: mk.lng }, anim.current);
+        if (old.marker.content instanceof HTMLElement)
+          setHeading(old.marker.content, mk.heading);
+        continue;
+      }
       if (old) old.marker.map = null;
       const el = markerElement(mk);
       const id = mk.id;
@@ -189,7 +245,7 @@ export function GoogleMap({
     }
   }, [circle, path, status]);
 
-  // Fit the view to everything shown — only when the set of places changes, not on hover
+  // Fit the view to everything shown — only when the set of places changes, not on hover or as vehicles move
   useEffect(() => {
     const m = map.current;
     if (status !== "ready" || !m) return;
@@ -202,9 +258,16 @@ export function GoogleMap({
       );
     }
     if (!pts.length) pts.push(center);
-    const key = pts
-      .map((p) => `${p.lat.toFixed(5)},${p.lng.toFixed(5)}`)
-      .join(";");
+    // Moving vehicles don't re-zoom the map: they count by id, not by where they are
+    const key = [
+      ...markers.map((p) =>
+        p.kind === "vehicle"
+          ? `v:${p.id}`
+          : `${p.lat.toFixed(5)},${p.lng.toFixed(5)}`,
+      ),
+      ...(path ?? []).map((p) => `${p.lat.toFixed(5)},${p.lng.toFixed(5)}`),
+      circle ? `c:${circle.lat},${circle.lng},${circle.radiusKm}` : "",
+    ].join(";");
     if (key === fitted.current) return;
     fitted.current = key;
     if (pts.length === 1) {

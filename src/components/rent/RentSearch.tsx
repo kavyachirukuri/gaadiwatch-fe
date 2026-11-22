@@ -364,7 +364,7 @@ export function RentSearch() {
                   markers={[
                     { id: 'centre', kind: 'centre', lat: data.center.lat, lng: data.center.lng, title: `Search centre: ${data.center.name}` },
                     ...items.map((l) => ({
-                      id: l.id, kind: 'price' as const, lat: l.lat, lng: l.lng, label: inr(l.pricePerDay), active: activeId === l.id,
+                      id: l.id, kind: 'price' as const, vehicleType: l.type, lat: l.lat, lng: l.lng, label: inr(l.pricePerDay), active: activeId === l.id,
                       title: `${l.title}, ${inr(l.pricePerDay)} per day`,
                       onHover: () => setActiveId(l.id), onClick: () => router.push(`/listings/${l.id}`),
                     })),

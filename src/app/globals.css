@@ -15,7 +15,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 84px; } /* jump links land below the fixed header */
 html, body { margin: 0; }
 img, video, svg { max-width: 100%; }
 body { font-family: var(--font-body); color: var(--ink); background: var(--ground); font-size: 15px; line-height: 1.45; }
@@ -59,7 +59,7 @@ button, input, select, textarea { font: inherit; }
 .tbl td { padding: 12px; border-bottom: 1px solid #eeebe4; vertical-align: middle; }
 
 /* Header / navigation */
-.nav { position: relative; display: flex; align-items: center; gap: 8px 12px; padding: 10px 16px; min-height: 60px; background: #fff; border-bottom: 1px solid var(--line); }
+.nav { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: 8px 12px; padding: 10px 16px; min-height: 60px; background: #fff; border-bottom: 1px solid var(--line); }
 .nav .nav-links { display: none; flex-wrap: wrap; gap: 4px 22px; flex: 1; min-width: 0; }
 .nav-links a { color: var(--ink); text-decoration: none; font-weight: 500; padding: 10px 0; }
 .nav-links a.cur { color: var(--green); box-shadow: inset 0 -2px 0 var(--green); }
@@ -117,7 +117,7 @@ button, input, select, textarea { font: inherit; }
 .gm-me { display: block; width: 16px; height: 16px; border-radius: 50%; background: var(--ink); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
 
 /* Map sizes: shorter on tablets and phones so the page still scrolls comfortably */
-.map-box { width: 100%; min-width: 0; }
+.map-box { width: 100%; min-width: 0; isolation: isolate; } /* keeps map controls under the header */
 .map-h-lg { height: 720px; }
 .map-h-md { height: 640px; }
 .map-h-sm { height: 460px; }
@@ -142,7 +142,7 @@ button, input, select, textarea { font: inherit; }
 
 /* Header: menu button + drawer on phones and tablets, full link row on desktops */
 .nav-burger { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid var(--line-strong); border-radius: 10px; background: #fff; cursor: pointer; flex: none; padding: 0; }
-.nav-drawer { position: absolute; top: 100%; left: 0; right: 0; z-index: 30; background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(0,0,0,.08); padding: 8px 16px 16px; display: flex; flex-direction: column; }
+.nav-drawer { position: absolute; top: 100%; left: 0; right: 0; z-index: 30; max-height: calc(100vh - 60px); overflow-y: auto; background: #fff; border-bottom: 1px solid var(--line); box-shadow: 0 12px 24px rgba(0,0,0,.08); padding: 8px 16px 16px; display: flex; flex-direction: column; }
 .nav-drawer a { padding: 14px 4px; border-bottom: 1px solid #eeebe4; color: var(--ink); text-decoration: none; font-weight: 500; }
 .nav-drawer a.cur { color: var(--green); }
 .nav-spacer { flex: 1; }
@@ -225,10 +225,20 @@ button, input, select, textarea { font: inherit; }
 .stepper-list::-webkit-scrollbar { display: none; }
 .stepper-list a { display: flex; flex: none; gap: 8px; align-items: center; padding: 6px 12px 6px 6px; border-radius: 999px; background: #fff; border: 1px solid var(--line); text-decoration: none; color: var(--ink); white-space: nowrap; }
 /* Jumping to a step leaves room above its heading */
-[id^="s"].card { scroll-margin-top: 16px; }
 @media (min-width: 1024px) {
   /* Sticky only where it has its own column, with a solid background so nothing shows through */
-  .stepper { flex: 1 1 220px; max-width: 260px; position: sticky; top: 16px; align-self: flex-start; background: var(--ground); z-index: 2; }
+  .stepper { flex: 1 1 220px; max-width: 260px; position: sticky; top: 84px; align-self: flex-start; background: var(--ground); z-index: 2; }
   .stepper-list { flex-direction: column; overflow: visible; margin: 0; padding: 0; }
   .stepper-list a { padding: 8px; border: 0; background: transparent; border-radius: 10px; white-space: normal; }
 }
+
+/* Live vehicles on the fleet map: icon badge + direction arrow */
+.gm-car { position: relative; display: block; width: 38px; height: 38px; padding: 0; border: 0; background: none; cursor: pointer; }
+.gm-car .gm-badge { position: absolute; inset: 3px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #1d5fd1; color: #fff; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.gm-car .gm-dir { display: none; position: absolute; inset: 0; transition: transform .8s ease; }
+.gm-car .gm-dir::before { content: ""; position: absolute; left: 50%; top: -7px; margin-left: -6px; border: 6px solid transparent; border-bottom: 9px solid #1d5fd1; border-top: 0; }
+.gm-car.al .gm-badge { background: #b42318; animation: gm-pulse 1.6s ease-out infinite; }
+.gm-car.al .gm-dir::before { border-bottom-color: #b42318; }
+.gm-car.on .gm-badge { outline: 3px solid var(--ink); outline-offset: 2px; }
+@keyframes gm-pulse { 0% { box-shadow: 0 0 0 0 rgba(180,35,24,.45); } 100% { box-shadow: 0 0 0 14px rgba(180,35,24,0); } }
+.gm-pin svg { margin-right: 4px; flex: none; }

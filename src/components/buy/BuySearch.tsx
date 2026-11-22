@@ -328,7 +328,7 @@ export function BuySearch() {
                     markers={[
                       { id: 'centre', kind: 'centre', lat: data.center.lat, lng: data.center.lng, title: `Search centre: ${data.center.name}` },
                       ...items.map((l) => ({
-                        id: l.id, kind: 'price' as const, lat: l.lat, lng: l.lng, label: inrShort(l.price).replace(' lakh', 'L'), active: activeId === l.id,
+                        id: l.id, kind: 'price' as const, vehicleType: l.type, lat: l.lat, lng: l.lng, label: inrShort(l.price).replace(' lakh', 'L'), active: activeId === l.id,
                         title: `${l.title}, ${inrShort(l.price)}`,
                         onHover: () => setActiveId(l.id), onClick: () => setActiveId(l.id),
                       })),
